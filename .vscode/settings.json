@@ -1,0 +1,11 @@
+{
+    "[latex]": {
+        "editor.wordWrap": "on"
+    },
+    "latex-workshop.latex.outDir": "build",
+    "cSpell.words": [
+        "Behaviour",
+        "behavioural",
+        "behaviours"
+    ]
+}
