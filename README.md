@@ -128,3 +128,52 @@ use git submodules to link the experimental repositories with the corresponding 
 cd paper_experiments
 git submodule add https://github.com/CollaborativeRoboticsLab/Academic-project-page-template.git
 ```
+
+
+## Clone this repository as a private repository
+
+### Method: Using GitHub's Import Tool
+
+This approach uses GitHub's built-in web interface to duplicate the public repository directly into a new private repository without using the command line.
+
+1. **Log in** to your account on [GitHub](https://github.com).
+2. Navigate directly to the [GitHub Repository Import Page](https://github.com/new/import).
+3. **Paste the URL** of this repository into the box labeled **"Your old repository’s clone URL"**.
+4. **Name your new repository** and ensure you select **Private** for the visibility level.
+5. Click **Begin Import** and wait for GitHub to complete the duplication process.
+
+Once the import tool finishes, clone your brand-new private repository to your local computer to begin working on it:
+
+```bash
+git clone https://github.com/your-username/your-private-repo.git
+```
+
+### How to Sync Future Changes from the this Public Repository
+
+Because your new private repository is a duplicate rather than an official GitHub fork, the web interface will not display a "Sync Fork" button. You must use the command line to pull updates from the original public repository.
+
+### 1. Link the Original Repository
+Move into your local repository folder and add the original public repository as a remote source named `upstream`:
+
+```bash
+cd your-private-repo
+git remote add upstream https://github.com/CollaborativeRoboticsLab/phd-documentation-workspace-template.git
+```
+
+### 2. Verify Your Remotes
+
+Ensure that both your private copy (`origin`) and the original project (`upstream`) are properly listed:
+```bash
+git remote -v
+```
+
+### 3. Pull and Push Updates
+Whenever you need to bring in updates from the original project's main branch, run the following commands:
+
+```bash
+# Fetch and merge the latest changes from the public repo
+git pull upstream main
+
+# Push those updates to your private GitHub repository
+git push origin main
+```
