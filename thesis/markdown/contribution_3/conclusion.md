@@ -1,0 +1,3 @@
+## Conclusion
+
+This section contains placeholder text for the Contribution 3 conclusion. Replace it with the chapter summary, key lessons, and how the work connects to the full-thesis conclusion.

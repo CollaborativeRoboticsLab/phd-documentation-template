@@ -1,0 +1,3 @@
+## Background
+
+Day by day, we do research to expand our understanding of the world and develop new technologies that improve our lives.

@@ -1,0 +1,32 @@
+# Thesis Structure
+
+- Introduction
+- Background
+- Motivation and Aim
+- Research Problem
+- Research Objectives
+- Contributions
+- Chapter Outline
+- Conclusion
+- Literature Review
+- Focus 1
+- Focus 2
+- Focus 3
+- Contribution 1
+- Literature Review
+- Methodology
+- Results and Discussion
+- Conclusion
+- Contribution 2
+- Literature Review
+- Methodology
+- Results and Discussion
+- Conclusion
+- Contribution 3
+- Literature Review
+- Methodology
+- Results and Discussion
+- Conclusion
+- Introduction
+- Results and Discussion
+- Conclusions

@@ -1,0 +1,142 @@
+\documentclass[a4paper,12pt]{book}
+\renewcommand{\baselinestretch}{1.5} 
+
+\makeatletter
+\def\input@path{{packages/}}
+\makeatother
+
+% List required Latex packages
+\usepackage{epsfig}
+\usepackage{graphicx, subfigure}
+\usepackage{float, subfloat}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{setspace}
+\usepackage{lineno}
+\usepackage{color}
+\usepackage{verbatim}
+\usepackage{cite,url}
+\usepackage{lscape}
+\usepackage[table]{xcolor}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{times}
+\usepackage{setspace}
+\usepackage{multirow}
+\usepackage{emptypage}
+\usepackage{appendix}
+\usepackage{array}
+\usepackage{listings}
+
+% Define bibliography style here
+\bibliographystyle{packages/onename}
+
+% Adjust various setting, margins, etc.
+\setlength{\voffset}{-1in}
+\setlength{\hoffset}{-1in}
+\setlength{\oddsidemargin}{2.5cm}
+\setlength{\evensidemargin}{2.5cm}
+\setlength{\textwidth}{16cm}
+\setlength{\textheight}{24cm}
+\setlength{\topmargin}{1.0cm}
+\renewcommand{\textfraction}{0}
+
+\lstdefinelanguage{XML}{
+  morekeywords={xmlns,version,type,name}, % list your tags here
+  sensitive=true,
+  morecomment=[s]{<!--}{-->},
+  morestring=[b]",
+  alsoletter={<>=-},
+}
+
+\lstdefinestyle{xmlStyle}{
+  language=XML,
+  basicstyle=\ttfamily\scriptsize,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=5pt,
+  backgroundcolor=\color{gray!10},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+}
+
+%
+%--------------------------------------------------------------------
+%
+\begin{document}
+
+%
+%--------------------------------------------------------------------
+%
+\frontmatter
+\include{prepages/title_page}
+
+\pagenumbering{roman}
+\setcounter{page}{3}
+
+\include{prepages/abstract}
+\include{prepages/authorship}
+\include{postpages/acknowledgement}
+\include{prepages/publications}
+\include{prepages/abbreviations}
+
+\tableofcontents
+\include{prepages/figures_and_tables}
+
+\mainmatter
+\pagenumbering{arabic}
+
+\include{introduction/introduction}
+\include{introduction/background}
+\include{introduction/motivation}
+\include{introduction/research_problem}
+\include{introduction/research_objective}
+\include{introduction/contributions}
+\include{introduction/outline_timeline}
+\include{introduction/conclusion}
+
+\include{literature/introduction}
+\include{literature/focus_1}
+\include{literature/focus_2}
+\include{literature/focus_3}
+
+\include{contribution_1/introduction}
+\include{contribution_1/literature}
+\include{contribution_1/methodology}
+\include{contribution_1/results}
+\include{contribution_1/conclusion}
+
+\include{contribution_2/introduction}
+\include{contribution_2/literature}
+\include{contribution_2/methodology}
+\include{contribution_2/results}
+\include{contribution_2/conclusion}
+
+\include{contribution_3/introduction}
+\include{contribution_3/literature}
+\include{contribution_3/methodology}
+\include{contribution_3/results}
+\include{contribution_3/conclusion}
+
+\include{results/introduction}
+\include{results/results}
+\include{conclusion}
+
+\appendix
+
+\include{postpages/appendix_1}
+\include{postpages/appendix_2}
+\include{postpages/appendix_3}
+
+\backmatter
+\cleardoublepage
+
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{Bilibiography}
+
+
+%
+%--------------------------------------------------------------------
+%
+\end{document}

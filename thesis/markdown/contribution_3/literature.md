@@ -1,0 +1,3 @@
+## Literature Review
+
+This section contains placeholder text for the Contribution 3 literature review. Replace it with the relevant prior work, comparative context, and the specific gap addressed by the chapter.
