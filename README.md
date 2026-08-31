@@ -25,6 +25,16 @@ Also this repo aims to be github-copilot friendly, providing a structure that al
 - For code suggestions and automation while writing LaTeX documents.
 - Agentic capabilities for managing and updating multiple research documents efficiently.
 
+## Documentation governance
+
+This repository treats source-of-truth ownership as explicit, because the canonical version of a section may move between thesis drafts, thesis LaTeX, papers, or experiment-linked artifacts over time.
+
+Collaborators should review these files before making cross-document content changes:
+
+- [Documentation guidelines](./docs/documentation-guidelines.md)
+- [Source-of-truth tracker](./docs/source-of-truth-tracker.md)
+- [Copilot workspace instructions](./.github/copilot-instructions.md)
+
 ## Prerequisites
 
 1. Install Visual Studio Code.
