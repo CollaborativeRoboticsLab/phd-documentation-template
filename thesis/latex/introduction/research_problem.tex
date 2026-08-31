@@ -1,19 +1,37 @@
 \section{Research Problem}
 \label{sec::ResearchProblem}
 
-This research aims to identify the limitations of doing PQR. To summarise these requirements, the following research questions have been identified:
+Robotic systems have gradually evolved over several decades to achieve the versatile control and planning systems available today. From Reactive systems and Deliberate systems to their combined version of hybrid systems and, finally, more abstracted behaviour-based systems, evolution has layered each new system's architecture on top of the previous generation while making the latest generation comparatively abstract. Deviating slightly from the evolution, learning-based systems encompass two categories: \textit {Decoupled learning-based systems}, which build upon previous generations, and \textit{Coupled learning-based systems}, which implement the entire planning and control pipeline independently and are entirely self-contained, without reliance on prior generations.
+
+Generally, robots can be operated by all these system types, but in current robots, the highest level system can either be behaviour-based or learning-based. Typically, for a robot to execute a task, an execution plan is created first, and then various subsystems are triggered per the execution plan. These subsystems, for the most part, employ a hybrid architecture, which combines reactive and deliberative systems. The Nav2 stack \cite{macenski2020marathon2} of the ROS2 \cite{macenski2022ros2} ecosystem, which is one popular navigational system, implements a behaviour-based system at the highest level, as shown in Figure \ref{fig::nv2_strucutre}
+
+\begin{figure}[h]
+\centering
+\vspace{5mm}
+\includegraphics[width=\textwidth]{Figures/nav2_architecture.png}
+\caption{Nav2 system architecture from https://docs.nav2.org/}
+\label{fig::nv2_strucutre}
+\end{figure}
+
+Figure \ref{fig::nv2_strucutre} \textit{BT navigator Server} represents the Behaviour-based system, where the Waypoint follower provides waypoint following behaviour. In contrast, the \textit{Planner server} implements a Deliberative system, while the \textit{Controller server} functions as a Reactive system. Typically, the \textit{Planner server} and \textit{Controller server} are used together, forming a hybrid system that balances long-term planning with real-time responsiveness. This architecture can be directly applied to most navigational tasks focusing on static and dynamic environments without human presence. Due to the fixed rule-based nature of the systems, social awareness and the spontaneity of humans cannot be easily identified by the system.
+
+In contrast, Learning-based systems incorporate Machine learning (ML) or Deep learning (DL) techniques either partially or entirely to implement the system. The accuracy and versatility of these systems heavily depend on the quality and diversity of the dataset used for training, which in turn influences their adaptability to dynamic environments. One advantage is the opportunity to include human-robot interaction scenarios in the dataset, allowing the learning-based system to implement proper and dynamic reactions. One issue with this system is that its capabilities and responses entirely depend on the dataset.
+
+Due to the limitations in learning and non-learning-based systems, as well as the emergence of LLMS and VLMS, a new research sub-area has developed in recent years, focusing on combining a robot's control or planning system with either LLMs or VLMs to generate dynamic execution plans based on environmental stimuli. These new systems are generally based on behaviour-based systems, and LLM or VLM is used to either generate a \textit{behaviour tree} \cite{izzo_btgenbot_2024, cao_robot_nodate} or a \textit{Python snippet} \cite{Yuan_2024} containing an execution plan.
+
+This research aims to identify the limitations of generative behaviour-based systems in human-robot interaction and propose solutions to enhance their functionality. The goal is to achieve smoother and more dynamic behaviours in robotic systems. To summarise these requirements, the following research questions have been identified:
 
 \begin{enumerate}
-    \item \textit{Question 1: What are the limitations of doing PQR, and how can these limitations be addressed to improve system performance and adaptability?}
+    \item \textit{How can robots exhibit dynamic behaviour in socially aware contexts, and what are the core principles and system requirements necessary to enable effective adaptability?} 
     
-    A Brief overview of the context and challenges associated with PQR.
+    Humans are highly dynamic creatures; thus, when robots are designed to coexist with humans, robots must be capable of dynamically replanning themselves in real time based on changes in the environment, tasks, or human behaviours. In socially aware robotics, this means not just reacting to physical changes but also adapting appropriately to social cues, cultural norms, and contextual expectations. To bring these dynamic replanning capabilities to existing robots and to improve adaptability, the ideal systems need to utilise existing development interfaces and provide a standardised interface themselves.
     
-    \item \textit{Question 2: How can PQR can be done method A effectively, and what are the key considerations for its successful implementation?}
+    \item \textit{How can attention be implemented in socially aware robots, and what sensory inputs and guiding principles govern robotic attention mechanisms?}
 
-    A brief overview of the context and challenges associated with performing PQR using method A.
+    To understand when to perform dynamic replanning, robots need to pay attention to the environment and understand what is happening around them. "Attention" in robots is analogous to human attention as it allows a robot to focus on the most relevant environmental stimuli via visual, auditory and proximity sensing. In socially aware settings, attention mechanisms help robots prioritise interaction with people, gestures, speech, or objects based on context, task relevance, and social norms.
     
-    \item \textit{Question 3: What are the key requirements for PQR to be performed successfully, and how can these requirements be met in practice?}
+    \item \textit{What are the key requirements for long-term dynamic task replanning in human-robot interaction, and how does active, interaction-driven planning influence its effectiveness over time?}
 
-    A brief overview of the context and challenges associated with ensuring successful PQR in practice.
+    Tasks often evolve in human-robot interaction (HRI). A robot’s initial plan may need to change due to unexpected events, new goals, changes in human behaviour, or changes in the environment. Long-term dynamic replanning enables robots to stay relevant, efficient, and aligned with human needs. When operating long-term, the robots must know and manage their resources, including energy and processing power, and balance autonomy with user interaction.
     
 \end{enumerate}

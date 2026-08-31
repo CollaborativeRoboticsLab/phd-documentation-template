@@ -1,12 +1,318 @@
 \section{Methodology}
 \label{sec::contrib1::methodology}
 
-This section contains placeholder text for the Contribution 1 methodology. Replace it with the system design, algorithms, experimental protocol, and implementation details for this contribution.
+The proposed behaviour-based planning system comprises three subsystems, Capabilities2 Framework, Prompt Tools and Capabilities2 Fabric, which are connected as shown in Figure \ref{fig::caontrib1::system_diagram}. The following subsections \ref{sec::contrib1::methodology::Capabilities2}, \ref{sec::contrib1::methodology::PromptTools}, and \ref{sec::contrib1::methodology::Fabric} will elaborate on these sub-systems in detail. Then, in subsections \ref{sec::contrib1::methodology::behaviour} and \ref{sec::contrib1::methodology::dynamic-generation}, functionality as a behaviour-based planning system and a generative behaviour-based planning system will be discussed.
 
 \begin{figure}[h]
 \centering
 \vspace{5mm}
-\includegraphics[width=\textwidth]{contribution_1/figures/test.png}
-\caption{Image}
-\label{fig::expected_timeline}
+\includegraphics[width=0.75\textwidth]{Figures/contrib1/system_diagram.png}
+\caption{Capabilities2 Fabric system high-level architecture}
+\label{fig::caontrib1::system_diagram}
 \end{figure}
+
+%
+%--------------------------------------------------------------------
+%
+
+\subsection{Capabilities2 Framework}
+\label{sec::contrib1::methodology::Capabilities2}
+
+The predecessor Capabilities system \cite{woodall2014ros} proposed an abstraction layer on top of the existing technical interfaces (ROS actions, services and topics) of ROS to represent the skills and functionalities of a robot as a streamlined, descriptive textual entity called \textit{Capability}, following ontological approaches. The original intention of this framework was to enable robotics developers to easily create robot-agnostic applications that can work with various types of robots. To achieve this purpose, each entity of capability was designed with three different components as follows, 
+
+\begin{itemize}
+    \item \textbf{Interfaces} described the capability and the ROS primitives that it comprised
+    \item \textbf{Providers} defined specific implementations of an interface and details for using it
+    \item \textbf{Semantic Interface} redefined interfaces based on semantic specificity
+\end{itemize}
+
+At a minimum, a capability entity requires an \textit{Interface} and a \textit{Provider} to function, and having a \textit{Semantic Interface} would increase its reusability and adaptability. The design was implemented in Python using rospy \cite{quigley2009ros}. Since the capability entities only provided an abstraction layer, the actual functionality that capability represented was controlled via a ROS launch file that was started and stopped at runtime by a capabilities server according to information in the related \textit{Interface}. Due to this design, the capabilities server was the only ROS primitive (node) required at the robot's startup, providing additional resource management features to the end-user.
+
+The new Capabilities2 system is based on the same core concepts as its predecessor. It follows the entity structure of having an \textit{Interface}, a \textit{Provider}, and a \textit{Semantic Interface}. However, it has been enhanced with several new features to improve its usability and adaptability. The following is a comparison between the features of the predecessor \textit{Capabilities} system and the new \textit{Capabilities2} system, along with the reasons for introducing the change.
+
+\begin{enumerate}
+    \item \textbf{Feature} : Language of Implementation
+    \begin{itemize}
+        \item \textit{Capabilities} : Python 2.7
+        \item \textit{Capabilities2} : C++ 17
+        \item \textit{Reason for change}: C++ improves the efficiency and performance of the system while allowing for better memory management, faster execution, and closer integration with hardware-level features.
+    \end{itemize}
+
+    \item \textbf{Feature} : Architecture
+    \begin{itemize}
+        \item \textit{Capabilities}: Interface, Provider, Semantic Interface-based capability representation and launch file-based capability triggering
+        \item \textit{Capabilities2}: Interface, Provider, Semantic Interface-based capability representation and runner based capability triggering
+        \item \textit{Reason for change}: Runners are implemented based on the plugin-based architecture and provide more functionality than just using launch files. A Runner can generally be used to trigger a workflow or gather data. Because of this, runners can be ROS2 action clients, ROS2 service clients, ROS2 topic subscribers, launch file runners, or any other combination. A runner inheritance hierarchy is available in Appendix \ref{app::Capabiltieis2Runner}. Plugin architecture and class inheritance simplify the implementation of new runners.
+    \end{itemize}
+
+    \item \textbf{Feature} : Database Handling
+    \begin{itemize}
+        \item \textit{Capabilities}: In-memory only, fixed models
+        \item \textit{Capabilities2}: Abstracted database handler with ORM support
+        \item \textit{Reason for change}: Maintaining a database allows for easier access and manageability when there are large, fixed numbers of capabilities compared to reading information from a file every time a capability is required.
+    \end{itemize}
+
+    \item \textbf{Feature} : Runtime adaptability
+    \begin{itemize}
+        \item \textit{Capabilities}: Static capability set
+        \item \textit{Capabilities2}: Can create and store capabilities at runtime
+        \item \textit{Reason for change}: Allows for creation and storing of capabilities at runtime via Capabilities2 API (and via related ROS2 Service). This can be achieved by utilising LLM systems or connecting through a user interface and uploading capability interface, provider, and semantic interface information.  
+    \end{itemize}
+
+    \item \textbf{Feature} : Capability Chaining
+    \begin{itemize}
+        \item \textit{Capabilities}: Not supported.
+        \item \textit{Capabilities2}: Can trigger one capability from another capability based on its state of execution using events.
+        \item \textit{Reason for change}: The early capabilities system only supported independent capability execution, limiting the use of the system. However, the new Capabilities2 system supports triggering another capability from within a capability. Currently, the system supports triggering another capability at the start of the capability using \textit{on\_start} event, at the shutdown of the capability using \textit{on\_stopped} event, at the successful completion of the capability using \textit{on\_success} event, and at the failed completion of the capability using \textit{on\_failure} event. This can be used for capability combining or chaining, allowing the creation of complex behaviours.
+    \end{itemize}
+\end{enumerate}
+
+Figure \ref{fig::contrib1::capabilities2_system} presents the current architecture of the Capabilities2 framework. The Capabilities2 framework implements an ROS 2 server interface that allows other systems to interact. The services available are explained in the Appendix \ref{app::Capabiltieis2Services}. The ROS2 Server comprises several subsystems, including the Capabilities2 API, Database Handler, Runner Cache, and Bond Cache. The left side of the boundary line in the figure \ref{fig::contrib1::capabilities2_system} shows the components of the Capabilities2 framework, while the right side shows subsystems triggered by the Capability runners. Any custom ROS2 system can be connected with the Capabilities2 framework with correct runner implementations.
+
+\begin{figure}[h]
+\centering
+\vspace{5mm}
+\includegraphics[width=\textwidth]{Figures/contrib1/capabilities2_system.png}
+\caption{Capabilities2 system architecture}
+\label{fig::contrib1::capabilities2_system}
+\end{figure}
+
+The following is a list of components of the Capabilities2 Framework, along with brief explanations.
+
+\begin{itemize}
+    \item \textbf{Capabilities2 API} is the central subsystem responsible for controlling capabilities. It handles the starting, stopping, and triggering of capabilities and their dependencies by collaborating with the RunnerCache subsystem. It also interacts with the database handler to store and retrieve capability information, as well as BondCache, to track clients of the framework. Additionally, it serves as the primary interface between the Capabilities2 ROS server and the capabilities themselves.
+
+    \item \textbf{RunnerCache} manages the implementation of capabilities. It offers an interface to start, stop, and trigger capabilities, which are represented as \textit{Runners}. Runners can interact with various ROS2 components, including ROS2 Topic subscribers, Service clients, or Action clients. As an example, in figure~\ref{fig::contrib1::capabilities2_system}, there are three runner groups: Nav2 runners for interacting with the Nav2 stack \cite{macenski2020marathon}, MoveIt2 runners for integration with the MoveIt2 stack \cite{coleman2014reducing}, and audio runners for communication with a custom audio stack. The modular design enables runners to be extended to support additional standard and custom ROS2-based systems. This subsystem also manages the event-based capability triggering functionality used for capability chaining.
+
+    \item \textbf{BondCache} tracks active users or clients of the Capabilities2 framework. Each capability is "bonded" to a client when it is started, enabling automatic shutdown and cleanup of capabilities when the client disconnects. This ensures proper resource management and adds a safety mechanism in the event of client failures or connection failures.
+
+    \item \textbf{Database Handler} manages the Interface, Semantic Interface, and Provider information using a database. Database usage significantly improves loading times and enhances the manageability and scalability of the system compared to using file-based access.
+\end{itemize}
+
+Combining these sub-systems allows the Capabilities2 framework to manage capabilities and function as a behaviour management system. 
+
+The Capabilities2 framework serves as a comprehensive skill or behaviour library that abstracts and manages physical and geometric constraints on behalf of the user or the task generation system integrated with it. Furthermore, its \textit{Interface} and \textit{Provider} components offer self-explanatory descriptions of each skill, detailing their functionality and appropriate usage. This design contributes to a well-structured skill library and ensures that all generated execution plans are inherently compatible with the corresponding robotic system. This approach addresses several limitations discussed in Subsection \ref{sec::contrib1::literature::behaviourllm}, which typically arise when linking large language models (LLMs) with behaviour-based systems.
+
+%
+%--------------------------------------------------------------------
+%
+
+\subsection{Prompt Tools}
+\label{sec::contrib1::methodology::PromptTools}
+
+Prompt Tools contains tools to enable robots to communicate with LLMs hosted on Ollama or OpenAI online servers. This collection of tools is implemented in C++ to achieve high efficiency and performance. The system consists of three main entities: Bridge, Scheme, and Provider, as shown in Figure \ref{fig::contrib1::prompttools_system}.
+
+\begin{figure}[h]
+\centering
+\vspace{5mm}
+\includegraphics[width=\textwidth]{Figures/contrib1/prompttools_system.png}
+\caption{Capabilities2 system architecture}
+\label{fig::contrib1::prompttools_system}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Bridge} is the main subsystem that interfaces the ROS2 system on the robot with a Large Language Model (LLM). Implemented as a ROS2 server, it facilitates communication between the robot and the LLM using \textit{Scheme} and \textit{Provider} components.
+
+    \item \textbf{Provider} handles the communication with the LLM. It is designed using a plugin-based architecture to support future extensibility. The current implementation supports REST API-based communication with both local and cloud LLMs. This includes providers for Ollama-based local LLMs and OpenAI-based online services. Providers support single-prompt interactions and multi-turn chat-like conversations between the robot and the LLM. The Provider can operate independently or with a \textit{Scheme}.
+
+    \item \textbf{Scheme} is also designed using a plugin-based architecture and adds a logic layer for managing prompts sent to the LLM and processing its responses. For example, the current \textit{Buffer Scheme} acts as a cache, temporarily storing messages from the robot until they are required. This design addresses the difference in interaction expectations: humans typically expect a response to every prompt, whereas robots may not. Filtering and controlling the flow of messages also helps reduce token usage, which is particularly beneficial when using paid services like OpenAI.
+\end{itemize}
+
+Combining these subsystems enables the Prompt Tools to communicate effectively and efficiently with LLMs.
+
+%
+%--------------------------------------------------------------------
+%
+
+\subsection{Capabilities2 Fabric}
+\label{sec::contrib1::methodology::Fabric}
+
+Capabilities2 Fabric extends the Capabilities2 framework to add execution plan parsing and triggering. This system allows the behaviour management system to evolve into a behaviour-based planning system. Capabilities2 Fabric is implemented in C++ to achieve high efficiency and performance and comprises two components: Capabilities2 Fabric and Capabilities2 Fabric Client, as illustrated in figure \ref{fig::contrib1::cap_fabric_system}. The Capabilities2 Fabric connects with the Capabilities2 Fabric Client through a ROS2 action interface, and the Capabilities2 Fabric connects with the Capabilities2 framework (explained in subsection \ref{sec::contrib1::methodology::Capabilities2}) via multiple ROS2 Service Interfaces. Due to this approach, the Capabilities2 Fabric Client remains connected to the Capabilities2 Fabric throughout an execution plan. In contrast, the Capabilities2 Fabric intermittently connects to the Capabilities2 framework throughout the execution. 
+
+\begin{figure}[h]
+\centering
+\vspace{5mm}
+\includegraphics[width=\textwidth]{Figures/contrib1/capabilities2_fabric_system.png}
+\caption{Capabilities2 Fabric system architecture}
+\label{fig::contrib1::cap_fabric_system}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Capabilities2 Fabric} is implemented as a client of the capabilities2 framework and maintains a heartbeat connection with the framework. It is the main subsystem that verifies and parses the execution plan, then requests the operation of capabilities from the capabilities2 ROS2 Server. It identifies the connections between the capabilities and notifies the Capabilities2 ROS2 Server about the connections, allowing the Capabilities2 ROS2 server to set up event-based capability chaining to match the execution plan. Once the execution starts on the fabric instance, the Capabilities2 Fabric maintains the heartbeat to the Capabilities2 framework until a new execution plan is loaded. The capabilities2 fabric expects the execution plan to be in XML format and supports sequential, parallel, and recovery control sequences. Further details on the execution plan and functionality of Fabric will be discussed in the next subsections \ref{sec::contrib1::methodology::behaviour} and \ref{sec::contrib1::methodology::dynamic-generation}.
+
+    \item \textbf{Capabilities2 Fabric Client} is capable of reading an XML-based execution plan from the file as well as accepting it via a ROS2 Service (During the startup, only file-based execution plan loading is available, and loads a predetermined plan. But after that, new plans can be added via ROS2 service). The accepted plan is then sent to the Capabilities2 fabric for execution or queued if another execution plan is already in operation. Additionally, Capabilities2 fabric supports additional ROS2 services that notify it of the Fabric's completion and allow pre-empting an executing plan.
+\end{itemize}
+
+%
+%--------------------------------------------------------------------
+%
+
+\subsection{Fabric as a Behaviour-based Control Architecture}
+\label{sec::contrib1::methodology::behaviour}
+
+Prior sections focused on explaining the various subsystems used to build the Fabric, the newly proposed behaviour-based planning system. This section will discuss the combination of Capabilities2 Fabric and Capabilities2 Server and how they collaborate to function as a behaviour-based planning system. 
+
+As mentioned earlier, the Capabilities2 fabric expects an execution plan in XML format. The following is a simple execution plan that includes all the syntax expected by the Capabilities2 fabric system.
+
+\vspace{5mm}
+
+\begin{lstlisting}[style=xmlStyle]
+<?xml version="1.0" encoding="UTF-8"?>
+<Plan name="navigate_or_return_fabric">
+    <Control type="sequential" name="contro_plan">
+        <Control type="sequential" name="main_execution_plan">
+            <Event interface="std_capabilities/CapabilityGetRunner" 
+                provider="std_capabilities/CapabilityGetRunner"/>
+            <Control type="parallel" name="gather_data">
+                <Event interface="std_capabilities/OccupancyGridRunner" 
+                    provider="std_capabilities/OccupancyGridRunner"/>
+                <Event interface="std_capabilities/RobotPoseRunner" 
+                    provider="std_capabilities/RobotPoseRunner" from="map" to="base_link"/>
+            </Control>
+            <Event interface="std_capabilities/WaypointRunner" 
+                provider="std_capabilities/WaypointRunner" x="5.0" y="5.0" />
+            <Control type="recovery" name="return_to_home_if_lost">
+                <Event interface="std_capabilities/WaypointRunner" 
+                    provider="std_capabilities/WaypointRunner" x="0.0" y="0.0" />
+            </Control>
+        </Control>
+        <Event interface="std_capabilities/FabricCompletionRunner" 
+            provider="std_capabilities/FabricCompletionRunner"/>
+    </Control>
+</Plan>
+\end{lstlisting}
+
+As mentioned above, the XML-based plan used by the Capabilities2 Fabric needs to follow a few syntax rules to be compatible with the Capabilities2 Fabric system, as outlined below.
+
+\begin{enumerate}
+    \item The execution plan can only consist of 3 types of XML Elements as visible in the above example:
+    \begin{itemize}
+        \item \textit{Plan} element functions as the root element.
+        \item \textit{Control} tags represent control flows of the fabric. 
+        \item \textit{Event} tags indicate capability events.
+    \end{itemize}
+    
+    \item The \textit{Plan} tag, as shown in the example above, encapsulates the XML-based plan and functions as the root element. This structure simplifies the extraction of the execution plan from a text, particularly when the plan has been generated by a large language model (LLM). The tag includes the following attributes:
+    \begin{itemize}
+        \item \textit{name} is a self-descriptive text to mean what the plan intends to do.
+    \end{itemize}
+
+    \item The \textit{Event} tags indicate capability events. The parent control tags decide the type of the event. The tag includes the following attributes:
+    \begin{itemize}
+        \item \textit{interface} indicates the interface or semantic interface related to the capability.
+        \item \textit{provider} indicate provider of the capability. 
+        \item Some capability events may have additional attributes that are unique to them and are required by the underlying systems to implement the capability functionality.
+    \end{itemize}
+
+    \item The \textit{Control} tags indicate control flows of the fabric. This is used to connect the child capability events with other capabilities. The tag includes the following attributes:
+    \begin{itemize}
+        \item \textit{type} indicates the type of control flow. 
+        \item \textit{name} is a self-descriptive text to mean what the control flow intends to do.
+    \end{itemize}
+
+    \item The capabilities2 fabric and capabilities2 framework support three types of control flows: sequential, parallel, and recovery, as shown in the example above.
+    \begin{itemize}       
+        \item \textit{Sequential} control flow triggers capabilities one after the other, based on the successful completion of the preceding capability. If a predecessor fails, its successor will not be triggered, and the Fabric will stop execution. This implementation utilises the \textbf{on success event} provided by the capabilities2 runners.
+    
+        \item \textit{Parallel} control flow triggers all specified capabilities simultaneously, allowing them to run in parallel. If all capabilities within the parallel block succeed, a successor capability event outside the block will be triggered. If any capability within the block fails, it does not affect the others. However, as execution will not proceed to the successor capability event until all capabilities report a \textbf{on success event}, the fabric will stop execution. This implementation utilises both \textbf{on started event} provided by the capabilities2 runners.
+        
+        \item \textit{Recovery} control flow triggers capabilities one after another, but only upon the failure of a predecessor. If the predecessor is a regular event XML element (non-control XML element), its \textbf{on failure event} initiates the recovery block. If the predecessor is a Sequential or Parallel control XML element, all \textbf{on failure events} from capabilities within that block are linked to trigger the recovery block. If any capability in the recovery block succeeds, execution immediately exits it and continues with the next capability event outside of it. This is useful for handling failures in both Sequential and Parallel flows. This implementation utilises both the \textbf{on failure event} and \textbf{on success event} from the capabilities2 runners.
+    \end{itemize}
+\end{enumerate}
+
+When the Capabilities2 Fabric Client receives an XML-based execution plan that conforms to the above-mentioned static syntax, it will be read and shared with the Capabilities2 Fabric. Then, the fabric will process it and trigger the runners in the Capabilities2 Framework, which controls various ROS2 systems. This whole interaction between these systems can be orchestrated as shown in figure \ref{fig::contrib1::capabilities2_fabric_flow}. 
+
+As shown in figure \ref{fig::contrib1::capabilities2_fabric_flow}, the Capabilities2 Fabric client will load the given plan during startup (and accept plans through ROS2 service interface thereafter) and send it to the Capabilities2 Fabric via the ROS2 action interface. After Capabilities2 Fabric receives the plan, it checks whether it can be parsed as XML. If so, Capabilities2 Fabric accepts the execution plan and notifies the Capabilities2 Fabric client about the acceptance. 
+
+\begin{figure}[h]
+\centering
+\vspace{5mm}
+\includegraphics[width=\textwidth]{Figures/contrib1/capabilities2_fabric_flow.png}
+\caption{Fabric sub system interaction for static plan execution}
+\label{fig::contrib1::capabilities2_fabric_flow}
+\end{figure}
+
+Once processing starts, the Capabilities2 Fabric must verify that the execution plan is valid and compatible with the robot system. To achieve that, the Capabilities2 Fabric will connect to the Capabilities2 framework to request all available \textit{Interfaces}. Then, once it receives the list of Interfaces, it will check whether any \textit{Semantic Interfaces} overrides the existing Interfaces. Finally, once it completes the semantic interface check, it will request \textit{Provider} information to all semantic interfaces and interfaces. 
+
+Once all the data has been gathered, it will iterate through the execution plan to verify that it contains only the available interfaces, semantic interfaces, and providers. This allows the system to confirm that the plan is compatible with the robot's capabilities. If not, the plan will be rejected, and the Capabilities2 Fabric client will be notified. Once the verification is complete, the Capabilities2 Fabric will extract the connections between the capabilities from the execution plan.
+
+Once all the connections are extracted, the Capabilities2 Fabric starts a heartbeat connection (bond connection) with the Capabilities2 framework, as shown in figure \ref{fig::contrib1::capabilities2_fabric_flow}. Additionally, any old bond connections between the Fabric and the framework will be stopped. Once done, the identified capabilities are started and configured with correct capability events to match the identified connections. Once all capabilities are configured, the first capability in the execution plan will be started.
+
+Once this starts, the Capabilities2 Fabric stops communicating with the Capabilities2 Framework except for maintaining the bond connection. Once the fabric completes its execution, it notifies the Capabilities2 Fabric Client about the completion, allowing the Client to load and start any new execution plans it has received. This allows the system to continue execution using new plans.
+
+%
+%--------------------------------------------------------------------
+%
+
+\subsection{Dynamic plan generation with Fabric}
+\label{sec::contrib1::methodology::dynamic-generation}
+
+Prior sections focused on explaining the various subsystems used to build the Fabric and their internal interactions to achieve functionality as a behaviour-based planning system. The previous section \ref{sec::contrib1::methodology::behaviour} presented how the combined system operates with static plans provided to the Capabilities2 fabric at startup or via the ROS2 service interface. 
+
+This section will focus on the combination of Capabilities2 Fabric, Capabilities2 Framework, and Prompt Tools subsystems and how they collaborate as a generative behaviour-based planning system that utilises LLMs for dynamic execution plan generation. The following is a simple execution plan that can be used at the start of the Capabilities2 fabric to initiate an LLM for generating execution plans via the Prompt Tools subsystem.
+
+\vspace{5mm}
+
+\begin{lstlisting}[style=xmlStyle]
+<?xml version="1.0" encoding="UTF-8"?>
+<Plan name="generate_navigation_plan">
+    <Control type="sequential" name="control_plan">
+        <Control name="sequential" name="request_plan_generation>
+            <Event name="std_capabilities/CapabilityGetRunner" 
+                provider="std_capabilities/CapabilityGetRunner"/>
+            <Event name="std_capabilities/PromptCapabilityRunner" 
+                provider="std_capabilities/PromptCapabilityRunner" />
+            <Event name="std_capabilities/OccupancyGridRunner" 
+                provider="std_capabilities/OccupancyGridRunner"/>
+            <Event name="std_capabilities/PromptOccupancyRunner" 
+                provider="std_capabilities/PromptOccupancyRunner" />
+            <Event name="std_capabilities/RobotPoseRunner" 
+                provider="std_capabilities/RobotPoseRunner" from="map" to="base_link"/>
+            <Event name="std_capabilities/PromptPoseRunner" 
+                provider="std_capabilities/PromptPoseRunner" />
+            <Event name="std_capabilities/PromptPlanRunner" 
+                provider="std_capabilities/PromptPlanRunner" replan="false" task="move to x:1 and y:2 position" />
+            <Event name="std_capabilities/FabricSetPlanRunner" 
+                provider="std_capabilities/FabricSetPlanRunner"/>
+        </Control>
+        <Event interface="std_capabilities/FabricCompletionRunner" 
+            provider="std_capabilities/FabricCompletionRunner"/>
+    </Control>
+</Plan>
+\end{lstlisting}
+
+Compared to a static plan used for controlling a robot, as presented in Section \ref{sec::contrib1::methodology::behaviour}, the plan mentioned above for initiating the dynamic plan generation process introduces several new syntax guidelines that must be followed to ensure proper and relevant dynamic plan generation. They can be listed as follows,
+
+\begin{enumerate}
+    \item Each data extraction capability must be accompanied by a prompting capability that enables the extracted data to be transferred to the LLM via the Prompt Tools subsystem.
+
+    \item A plan needs to start with (or at least contain) capabilities that can inform the LLM about the capabilities of the robot system.
+
+    \item A plan needs to contain capabilities that can request a new plan from the LLM and transfer that plan to the Capabilities2 Fabric client for execution.
+\end{enumerate}
+
+When the Capabilities2 Fabric Client receives an XML-based execution plan that conforms to the static and dynamic plan generation-related syntax, it will be read and shared with the Capabilities2 Fabric. Then, the fabric will process it and trigger the runners in the Capabilities2 Framework, which controls various ROS2 systems, extracts data from them, and transfers it to the LLM. This whole interaction between these systems can be orchestrated as shown in figure \ref{fig::contrib1::capabilities2_fabric_generate}. 
+
+\begin{figure}[h]
+\centering
+\vspace{5mm}
+\includegraphics[width=\textwidth]{Figures/contrib1/capabilities2_fabric_generate.png}
+\caption{Fabric sub system interaction for dynamic plan execution}
+\label{fig::contrib1::capabilities2_fabric_generate}
+\end{figure}
+
+This interaction diagram shown in figure \ref{fig::contrib1::capabilities2_fabric_generate} is an extended version of the diagram presented in figure \ref{fig::contrib1::capabilities2_fabric_flow} with added functionality for new plan generation. 
+
+As shown in figure \ref{fig::contrib1::capabilities2_fabric_generate}, it will read the given plan and forward it to the Capabilities2 Fabric that will accept and follow the procedure to verify the plan and extract the connections as mentioned in section \ref{sec::contrib1::methodology::behaviour}. 
+
+Once all the connections are extracted and the fabric starts executing, the capability information prompting capabilities will extract the capability information from the capabilities2 server and prompt them to the Prompt Tools subsystem for caching. Then, other capabilities that extract world information, such as the Occupancy Grid map and the Robot's pose, will also extract information from their respective ROS2 systems and prompt them to cache it. Finally, the capability that requests the plan from the LLM will prompt with the task information about plan generation, and this would flush all the collected information in the Prompt Tools to the LLM as a single API call. The next execution plan would be extracted from the LLM's response and sent to the Capabilities2 Fabric client for queuing. Once the fabric completes the execution, the following plan will be loaded from the queue and started. This system architecture with \textit{n} number of runners can be visualised as Figure \ref{fig::contrib1::Capabilities2_fabric_gene_system}. This process will iterate until the initial task in the first plan is achieved.
+
+\begin{figure}[h]
+\centering
+\vspace{5mm}
+\includegraphics[width=\textwidth]{Figures/contrib1/Capabilities2_fabric_gene_system.png}
+\caption{Fabric system architecture for plan generation}
+\label{fig::contrib1::Capabilities2_fabric_gene_system}
+\end{figure}
+
+The snapshots of environmental data shared with the LLM in each execution cycle enable it to understand the robot's state and the task at hand, allowing it to create a new compatible execution plan. This iterative approach is designed to facilitate long-term planning and delegate decision-making to the LLM.

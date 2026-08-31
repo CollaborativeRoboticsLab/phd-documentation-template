@@ -1,4 +1,101 @@
 \section{Results and Discussion}
 \label{sec::contrib1::results}
-    
-This section contains placeholder text for the Contribution 1 results. Replace it with experimental outcomes, analysis, ablation studies, and discussion of limitations or unexpected behaviour.
+
+This section will focus on the functionality and performance of the capabilities2 fabric during plan execution and plan generation.
+
+\subsection{Plan execution functionality}
+\label{sec::contrib1::results::exec-func}
+
+To evaluate the functionality of the Capabilities2 Fabric, multiple Capabilities2 runners have been developed for Navigation-related ROS2 interfaces. Figure \ref{fig::contrib1::fabric_exec_functionality_system} shows a basic system used for evaluating the functionality of the Capabilities2 fabric and the Capabilities2 framework.
+
+\begin{figure}[h]
+\centering
+\vspace{5mm}
+\includegraphics[width=\textwidth]{Figures/contrib1/fabric_exec_functionality_system.png}
+\caption{Capabilities2 Fabric functionality execution system with Nav2 stack}
+\label{fig::contrib1::fabric_exec_functionality_system}
+\end{figure}
+
+New Runners have been implemented to work with the Capabilities2 Fabric client and Navigation2 stack,
+
+\begin{itemize}
+    \item \textit{Fabric Completion Runner} is a service client-based runner used to inform the Capabilities2 fabric about the completion of the fabric execution. Since the Capabilities2 server, fabric, or fabric client does not actively monitor the progress of the capabilities, this capability is used to notify the Capabilities2 fabric client of fabric execution completion. This into the execution plan by Capabilities2 Fabric itself as an internal modification.
+
+    \item \textit{Waypoint Runner} is an action client-based runner used to start the \textit{NavigateToPose} action server from the Navigation2 stack. This allows the robot system to move from one position to another.
+
+    \item \textit{Occupancygrid Runner} is a Topic subscriber-based runner used to extract occupancy grid map data from SLAM Toolbox \cite{Macenski2021} used for localisation.
+
+    \item \textit{RobotPose Runner} is a TF Library listener-based runner used to extract the robot's position data from SLAM Toolbox \cite{Macenski2021} used for localisation.
+\end{itemize}
+
+The functionality evaluation was conducted by creating multiple execution plans based on these capability runners, which reflect single-point waypoint navigation and multi-point waypoint navigation, using a Gazebo-based simulation setup as the robot system, as shown in Figure \ref{fig::contrib1::fabric_exec_functionality_system}. The following table \ref{tab:fabric_execution_functionality} summarises the results of the evaluation. Plans used for assessment are available in the Appendix \ref{app::FabricExecutionFunctionalityPlans}
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{c|c|c}
+       Navigation Plan   &  Simulated Robot & Real Robot \\
+       \hline
+       Single point Test & Successful & pending \\
+       Two point Test    & Successful & pending \\
+       Three point Test  & pending    & pending  \\
+       Four point Test   & pending    & pending \\
+    \end{tabular}
+    \caption{Caption}
+    \label{tab:fabric_execution_functionality}
+\end{table}
+
+
+\subsection{Plan generation functionality}
+\label{sec::contrib1::results::gene-func}
+
+To evaluate the functionality of the Capabilities2 Fabric dynamic plan generation, multiple additional runners have been developed for Prompt Tools and other ROS2 interfaces. Figure \ref{fig::contrib1::fabric_gene_functionality_system} illustrates a basic system for evaluating the plan generation functionality of the Fabric, utilising the Capabilities2 fabric, the Capabilities2 framework, and the Prompt Tools.
+
+\begin{figure}[h]
+\centering
+\vspace{5mm}
+\includegraphics[width=\textwidth]{Figures/contrib1/fabric_gene_functionality_system.png}
+\caption{Capabilities2 Fabric functionality execution system with Nav2 stack}
+\label{fig::contrib1::fabric_gene_functionality_system}
+\end{figure}
+
+The following new runners have been implemented to work with the Capabilities2 Fabric client and Prompt Tools stack while also utilising runners presented in the previous section \ref{sec::contrib1::methodology::behaviour}
+
+\begin{itemize}
+    \item \textit{Capability Get Runner} is a service client-based runner used to extract capability-related information from the Capabilities2 server.
+
+    \item \textit{Fabric Set Plan Runner} is a service client-based runner used to transfer a new execution plan to the Capabilities2 fabric client.
+
+    \item \textit{Prompt Occupancy Runner} is a service client-based runner used to transfer an occupancy grid map to the Prompt Tools. It is currently compatible with the \textit{Occupancygrid Runner}.
+
+    \item \textit{Prompt Pose Runner} is a service client-based runner used to transfer a robot's pose to the Prompt Tools. It is currently compatible with the \textit{RobotPose Runner}.
+
+    \item \textit{Prompt Capability Runner} is a service client-based runner used to transfer capability information to the Prompt Tools. It is currently compatible with the \textit{Capability Get Runner}.
+
+    \item \textit{Prompt Plan Runner} is a service client-based runner used to prompt the next task's information to the Prompt Tools to generate a new plan. 
+\end{itemize}
+
+The functionality evaluation was conducted by creating multiple tasks to generate execution plans, including single-point and multi-point waypoint navigation. The accuracy of these generated plans was evaluated using a Gazebo-based simulation setup as the robot system, as shown in Figure \ref{fig::contrib1::fabric_gene_functionality_system}. The following table \ref{tab:fabric_execution_functionality} summarises the results of the evaluation. 
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{c|c|c}
+       Task   &  Success status & Number of Iterations of planning \\
+       \hline
+       Single point Test & pending & pending \\
+       Two point Test    & pending & pending \\
+       Three point Test  & pending & pending  \\
+       Four point Test   & pending & pending \\
+    \end{tabular}
+    \caption{Caption}
+    \label{tab:fabric_execution_functionality}
+\end{table}
+
+
+\subsection{Plan execution performance}
+\label{sec::contrib1::results::exec-perf}
+
+
+\subsection{Plan generation performance}
+\label{sec::contrib1::results::gene-perf}
