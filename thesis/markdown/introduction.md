@@ -1,0 +1,3 @@
+# Introduction
+
+This chapter contains placeholder text for the thesis introduction. Replace it with a short opening overview of the research domain, the thesis motivation, the main research questions, and how the rest of the document is structured.

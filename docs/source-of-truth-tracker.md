@@ -6,12 +6,15 @@ Use this file to record where the canonical version of a topic currently lives a
 
 | Scope | Current canonical file | Previous canonical file | Mirrors or dependents | Status | Last verified | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Thesis introduction | TBD | TBD | TBD | undecided | TBD | Fill when ownership is agreed |
-| Literature review | TBD | TBD | TBD | undecided | TBD | Fill when ownership is agreed |
-| Contribution 1 | TBD | TBD | TBD | undecided | TBD | Fill when ownership is agreed |
-| Contribution 2 | TBD | TBD | TBD | undecided | TBD | Fill when ownership is agreed |
-| Contribution 3 | TBD | TBD | TBD | undecided | TBD | Fill when ownership is agreed |
-| Conclusion | TBD | TBD | TBD | undecided | TBD | Fill when ownership is agreed |
+| Thesis introduction | `thesis/latex/introduction/` | TBD | `thesis/markdown/introduction/`, `thesis/markdown/introduction.md` | pending | 2026-08-31 | Thesis introduction currently lives in the LaTeX section files |
+| Literature review | TBD | TBD | `thesis/latex/literature/`, `thesis/markdown/literature/`, `papers/gpsfsm-2026/conference_101719.tex` | undecided | 2026-08-31 | Relevant material currently exists in LaTeX, markdown, and the GPSFSM paper |
+| Contribution 1 | TBD | TBD | `papers/capabilities2-2025/conference_101719.tex`, `papers/gpsfsm-2026/conference_101719.tex`, `thesis/latex/contribution_1/` | undecided | 2026-08-31 | Paper drafts hold the current material; the thesis LaTeX version is outdated |
+| Contribution 2 | `thesis/markdown/contribution_2/` | TBD | `thesis/latex/contribution_2/` | pending | 2026-08-31 | Section-level canonical source declared in thesis markdown |
+| Contribution 3 | TBD | TBD | TBD | undecided | 2026-08-31 | Not started yet |
+| Conclusion | TBD | TBD | TBD | undecided | 2026-08-31 | Not started yet |
+| GPSFSM 2026 experiment content | `paper-experiments/gpsfsm-2026/README.md` | TBD | `paper-experiments/gpsfsm-2026/docs/index.html`, `papers/gpsfsm-2026/conference_101719.tex` | pending | 2026-08-31 | Repository root README recorded as the canonical experiment entry point |
+| GPSFSM 2026 paper | `papers/gpsfsm-2026/conference_101719.tex` | TBD | `thesis/markdown/contribution_2/`, `thesis/latex/contribution_2/`, `paper-experiments/gpsfsm-2026/README.md` | pending | 2026-08-31 | Canonical manuscript source declared for the 2026 GPSFSM paper |
+| Capabilities2 2025 paper | `papers/capabilities2-2025/conference_101719.tex` | TBD | `papers/capabilities2-2025/references.bib`, `papers/capabilities2-2025/bibliography.bib` | pending | 2026-08-31 | Canonical manuscript source declared for the 2025 Capabilities2 paper |
 
 ## Change Log
 
@@ -19,7 +22,15 @@ Add a new entry whenever the canonical location for a content area changes or wh
 
 | Date | Scope | New canonical file | Previous canonical file | Reason for change | Mirrors or dependents | Sync status | Owner | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| YYYY-MM-DD | Example: Contribution 1 methodology | `thesis/markdown/contribution_1/methodology.md` | `papers/ieee-ras/root.tex` | Drafting moved back to thesis markdown after review feedback | `thesis/latex/contribution_1/methodology.tex`, `papers/ieee-ras/root.tex` | pending | TBD | Replace this example row when first used |
+| 2026-08-31 | Thesis introduction | `thesis/latex/introduction/` | TBD | Initial source-of-truth declaration for the introduction section | `thesis/markdown/introduction/`, `thesis/markdown/introduction.md` | pending | user | LaTeX is the current drafting home for the thesis introduction |
+| 2026-08-31 | Literature review | TBD | TBD | Recorded currently available source material while canonical ownership remains unresolved | `thesis/latex/literature/`, `thesis/markdown/literature/`, `papers/gpsfsm-2026/conference_101719.tex` | undecided | user | Literature review content is currently split across thesis LaTeX, thesis markdown, and the GPSFSM paper |
+| 2026-08-31 | Contribution 1 | TBD | TBD | Recorded current source material and noted outdated thesis LaTeX copy | `papers/capabilities2-2025/conference_101719.tex`, `papers/gpsfsm-2026/conference_101719.tex`, `thesis/latex/contribution_1/` | undecided | user | Contribution 1 content currently comes from the two paper drafts; the thesis LaTeX version is outdated |
+| 2026-08-31 | Contribution 3 | TBD | TBD | Recorded current project status | TBD | undecided | user | Section not started yet |
+| 2026-08-31 | Conclusion | TBD | TBD | Recorded current project status | TBD | undecided | user | Section not started yet |
+| 2026-08-31 | Contribution 2 | `thesis/markdown/contribution_2/` | TBD | Initial source-of-truth declaration for the thesis contribution section | `thesis/latex/contribution_2/` | pending | user | Section-level ownership spans multiple markdown files in this directory |
+| 2026-08-31 | GPSFSM 2026 experiment content | `paper-experiments/gpsfsm-2026/README.md` | TBD | Initial source-of-truth declaration for the experiment repository content | `paper-experiments/gpsfsm-2026/docs/index.html`, `papers/gpsfsm-2026/conference_101719.tex` | pending | user | README is used as the canonical repository entry point |
+| 2026-08-31 | GPSFSM 2026 paper | `papers/gpsfsm-2026/conference_101719.tex` | TBD | Initial source-of-truth declaration for the paper manuscript | `thesis/markdown/contribution_2/`, `thesis/latex/contribution_2/`, `paper-experiments/gpsfsm-2026/README.md` | pending | user | Mirrors and derived summaries still need reconciliation against the paper draft |
+| 2026-08-31 | Capabilities2 2025 paper | `papers/capabilities2-2025/conference_101719.tex` | TBD | Initial source-of-truth declaration for the paper manuscript | `papers/capabilities2-2025/references.bib`, `papers/capabilities2-2025/bibliography.bib` | pending | user | Bibliography files are tracked as immediate manuscript dependents |
 
 ## Status Values
 

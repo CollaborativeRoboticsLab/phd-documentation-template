@@ -1,7 +1,7 @@
 ## Research Objectives
 
-1. To investigate the fundamentals behind T.
+1. To investigate how robots can exhibit dynamic behaviour in socially aware contexts by identifying the core principles and system-level requirements necessary for effective adaptability in real-time interactions.
 
-1. To explore the mechanisms and principles underlying U.
+2. To explore how attention can be embodied in socially aware robots by utilising relevant sensory inputs and the underlying mechanisms that guide attention-based behaviour in robotic systems.
 
-1. To analyze the impact of V on the overall system performance and user experience.
+3. To examine the requirements for long-term dynamic task replanning in human-robot interaction and to assess how active, interaction-driven planning mechanisms influence the effectiveness and adaptability of such replanning over extended periods.

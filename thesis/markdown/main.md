@@ -9,7 +9,7 @@
 - Chapter Outline
 - Conclusion
 - Literature Review
-- Focus 1
+- Generative Behaviour Planning
 - Focus 2
 - Focus 3
 - Contribution 1
