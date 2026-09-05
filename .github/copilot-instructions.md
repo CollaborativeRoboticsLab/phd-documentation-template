@@ -20,7 +20,7 @@ This workspace manages research content that may exist in multiple forms at the 
 3. For paper content derived from thesis sections, preserve venue-specific framing while keeping research facts, claims, and citations consistent with the canonical source.
 4. Do not edit build artifacts under `build/` unless the user explicitly asks for generated outputs to be inspected.
 5. Do not change class files, style files, or bibliography style assets unless the user asks for formatting or tooling changes.
-6. When adding new sections or files, follow the existing folder split by document type and chapter/contribution.
+6. When adding new sections or files, follow the existing folder split by document type and chapter/contribution. If the file is too long and can be divided into sections, create separate files and name them with <filename>_<section>.md. eg: literature_01.md
 
 ## Source-of-Truth Change Rules
 
