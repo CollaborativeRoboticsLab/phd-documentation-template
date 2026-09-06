@@ -1,0 +1,52 @@
+# Unresolved Citations
+
+## Contribution 1
+Using Finite State Machines in Introductory Robotics: Methods and Applications for Teaching and Learning
+Harnessing the Power of Large Language Models for Automated Code Generation and Verification
+Neuro-Symbolic Robotics
+Automatic Behavior Tree Expansion with LLMs for Robotic Manipulation
+Exploring LLM-powered multi-session human-robot interactions with university students
+Semantic Intelligence: Integrating GPT-4 with A* Planning in Low-Cost Robotics
+A Survey of Robot Intelligence with Large Language Models
+Speech-Guided Sequential Planning for Autonomous Navigation Using Large Language Model Meta AI 3 Llama3
+LLM-Aided Autonomous Robot Navigation
+Can Large Language Models Help Developers with Robotic Finite State Machine Modification?
+MindEye-OmniAssist: A Gaze-Driven LLM-Enhanced Assistive Robot System for Implicit Intention Recognition and Task Execution
+Look Before You Leap: Using Serialized State Machine for Language Conditioned Robotic Manipulation
+LLM-based Robot Task Planning with Exceptional Handling for General Purpose Service Robots
+Function Calling in Large Language Models: Industrial Practices, Challenges, and Future Directions
+AI Reasoning in Deep Learning Era: From Symbolic AI to Neural Reasoning Toward More General and Adaptive Intelligence
+A Large Language Model-Enabled Control Architecture for Dynamic Resource Capability Exploration in Multi-Agent Manufacturing Systems
+Understanding Large-Language Model (LLM)-powered Human-Robot Interaction
+
+## Contribution 2
+Fault Detection and Diagnosis in Multi-Robot Systems: A Survey
+On Fault Detection and Diagnosis in Robotic Systems
+Hybrid Fault-Tolerant Control in Cooperative Robotics: Advances in Resilience and Scalability
+LogLLM paper
+Towards Reliable LLM-based Robot Planning via Combined Uncertainty Estimation
+SAFE paper
+FAIL-Detect paper
+Guardian paper
+I-FailSense paper
+FailSafe paper
+RoboReflect paper
+VLA-in-the-Loop paper
+STAR paper
+VerifyLLM paper
+RoboGuard paper
+RepV paper
+AutoRT paper
+LAMARS paper
+UKF fault-detection source
+NN actuator-monitoring source
+robot_localization reference
+passive listener residual-monitoring reference
+LibTorch deployment reference
+ros2_control effort-interface reference
+PDDL planning reference
+LLM planning-safety reference
+UPPAAL reference
+PRISM reference
+AutoTAMP paper
+CaStL paper

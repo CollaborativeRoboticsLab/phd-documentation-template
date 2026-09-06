@@ -1,5 +1,0 @@
-# Introduction
-
-Experience is a behavior planning extension of [fabric](https://github.com/CollaborativeRoboticsLab/fabric) for robots that uses prior execution experience, capability knowledge, and live system telemetry to improve task planning before execution. The project sits between capability discovery and task execution: it consumes skill descriptions from [capabilities2](https://github.com/CollaborativeRoboticsLab/capabilities2), observes runtime system behavior from [supervisor](https://github.com/CollaborativeRoboticsLab/supervisor), and is intended to produce or refine plans that can be executed by [fabric](https://github.com/CollaborativeRoboticsLab/fabric).
-
-This work focuses on making planning more selective and more robust than the common "dump everything into the LLM" pattern. Instead of forwarding every available log, metric, and skill description to the planner, Experience aims to retrieve only the knowledge that is relevant to the current task, estimate whether a candidate plan is likely to succeed under current resource constraints, and trigger restructuring or replanning when the robot is unlikely to complete the plan safely.

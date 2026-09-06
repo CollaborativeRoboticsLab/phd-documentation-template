@@ -1,0 +1,49 @@
+# Literature Review
+
+Pre-execution verification has become a central theme in robotic planning because modern planners must operate between two conflicting demands: openness to natural-language goals and strict physical constraints during execution. Classical planning systems such as PDDL-based symbolic planners provide strong logical structure because the domain designer specifies states, operators, preconditions, and effects explicitly. That structure supports formal reasoning, but it also restricts adaptability in open environments where the robot must interpret ambiguous commands, react to changing context, or operate with incomplete world models. Large language models and vision-language models expand flexibility by mapping high-level language into candidate action sequences, but they also introduce new safety risks because generated plans may be plausible in language while violating ordering constraints, physical prerequisites, or resource limits. Pre-execution verification emerges precisely to mediate this tension between generative freedom and embodied safety. [PDDL planning reference] [LLM planning-safety reference]
+
+Before the rise of foundation-model-based planning, verification in robotics was dominated by formal methods. UPPAAL represents one of the most influential families of tools for reasoning about real-time systems through networks of timed automata. In this setting, system states are extended with clocks, invariants, and guarded transitions, allowing planners and controllers to be checked against deadlines, schedulability conditions, reachability requirements, and deadlock freedom. A timed automaton can be represented by the tuple [UPPAAL reference]
+
+$$
+(L, l_0, C, A, E, I),
+$$
+
+where locations, initial state, clocks, actions, guarded edges, and invariants jointly define the permissible temporal evolution of the system. What makes UPPAAL particularly useful in robotics is not only its ability to confirm whether a policy is valid, but also its later extensions for cost-optimal reachability, game-theoretic control synthesis, and statistical model checking. These variants make it possible to reason about execution cost, adversarial uncertainty, and stochastic timing effects without abandoning the formal structure of timed automata.
+
+PRISM addresses a related but distinct verification need by supporting probabilistic models such as discrete-time Markov chains, Markov decision processes, continuous-time Markov chains, and stochastic games. This is especially valuable in robotic systems where action outcomes are uncertain, sensors are noisy, or the environment changes in ways that must be modelled statistically rather than deterministically. Properties are usually specified in temporal logics such as PCTL, whose standard grammar includes state formulas of the form [PRISM reference]
+
+$$
+\Phi ::= \mathrm{true} \mid ap \mid \Phi \wedge \Phi \mid \neg \Phi \mid P_{\sim p}(\Psi),
+$$
+
+and path formulas of the form
+
+$$
+\Psi ::= X\Phi \mid \Phi\, U^{\le t}\, \Phi.
+$$
+
+This framework allows roboticists to ask not only whether a task is possible, but with what probability it will succeed, how much resource it is expected to consume, and how likely certain failure modes are under uncertainty. In multi-robot settings, compositional variants help control state-space growth by verifying components independently and then combining guarantees about probability or reward accumulation.
+
+The introduction of foundation models did not remove the need for formal verification; instead, it created demand for neuro-symbolic combinations. VerifyLLM is representative of this direction because it uses a language model to translate natural-language instructions into linear temporal logic and then checks candidate action sequences against those constraints. The central idea is that a generated plan should not be accepted merely because it reads coherently. Instead, its ordering, prerequisite structure, and redundancy should be examined against an explicit temporal specification. This is particularly important in household or service-robot domains where errors such as placing an object before reaching the correct location, omitting a required pickup action, or repeating unnecessary navigation commands may not be syntactically visible but still render the plan unusable. Reported evaluations of these approaches suggest that they can reduce ordering errors and improve similarity to validated reference plans compared with unconstrained language-model baselines. [VerifyLLM paper]
+
+Other hybrid task-and-motion frameworks follow a similar logic while varying the verification surface. AutoTAMP uses a language model not to produce trajectories directly but to translate natural-language tasks into an intermediate representation that can be checked and then solved by a conventional task-and-motion planner. The importance of this design is architectural: the language model is treated as an interface generator rather than as the final arbiter of executability. If the translated representation fails syntactic or semantic checks, it can be repaired through re-prompting before motion planning proceeds. CaStL adopts a related strategy by translating language into structured constraint classes, such as attribute, eventual, implication, and global constraints, which are then injected into a task-and-motion planning pipeline. Other systems enrich this further through ontology-based constraints, scene-graph grounding, or structured symbolic relaxation rules, but the common pattern remains the same: natural-language flexibility is preserved only by inserting a verifiable intermediate layer between expression and execution. [AutoTAMP paper] [CaStL paper]
+
+Pre-execution verification also has to account for resources, not only logical consistency. Time is the most immediate example because robots often operate under deadlines, dynamic environmental windows, or battery constraints that make an otherwise correct plan unacceptable. Timed-automata methods naturally expose schedulability and deadline feasibility, while probabilistic models can estimate expected execution duration under uncertain transitions. Energy introduces another verification dimension. Multi-robot task allocation and mobile-manipulation planning frequently optimise some cumulative cost, often expressed abstractly as
+
+$$
+\mathrm{SumCost} = \sum_{i=1}^{n} C_i,
+$$
+
+or in swarm balancing settings through an average energy model such as
+
+$$
+\bar{E}_X = \frac{1}{n}\sum_{i=1}^{n} E(R_i).
+$$
+
+These abstractions highlight that a plan can fail before execution begins not because it is logically inconsistent, but because it is likely to overrun time, deplete a battery, or assign unsafe workloads across agents. For manipulators and collaborative robots, the situation is even subtler because energy does not always scale monotonically with speed in the same way across platforms. Industrial robots and gravity-compensated cobots can exhibit different energy-time profiles, which means that resource-aware verification must be grounded in platform-specific dynamics rather than generic assumptions.
+
+The same logic applies to failure modelling and success-rate estimation. When actions are uncertain, planners increasingly rely on probabilistic verification over Markov decision processes or interval Markov models to determine whether full task satisfaction is achievable, what partial satisfaction is possible when it is not, and what recovery policy best preserves progress. In more extreme environments, Bayesian estimators and imprecise-probability models can be used to learn uncertain transition or failure rates online and then verify bounds on success probability and expected cost. For learned multi-agent policies, direct verification of a neural controller may be intractable, so policy distillation into simpler symbolic or tree-based models provides a way to recover compositional model-checking guarantees while retaining much of the original behavioural competence.
+
+An important consequence of all these methods is that verification is no longer a static acceptance test. It increasingly functions as a replanning trigger. When a translated task representation fails semantic checking, a language model may be re-prompted with the error trace. When a motion planner detects that symbolic steps cannot be grounded into collision-free trajectories, it can return structured feedback that forces revision of the symbolic plan. In probabilistic or timed settings, a drop in predicted success probability or a violation of resource bounds can trigger dynamic rescheduling or fallback-policy synthesis. Verification therefore becomes an active feedback loop linking planning, diagnosis, and adaptation rather than a one-time gate placed before execution.
+
+Taken together, the literature suggests three main conclusions. First, hybrid neuro-symbolic verification is becoming necessary for any robotic planner that accepts open-ended linguistic input, because language models alone do not provide sufficient guarantees for safety-critical tasks. Second, logical validity is only one part of plan acceptability; timing, energy, kinematic feasibility, and stochastic success must also be incorporated into the verification boundary. Third, pre-execution verification is increasingly merging with runtime assurance, especially in systems that learn or update their models online. For this thesis, these trends are especially relevant because they align closely with the need to assess candidate plans before execution using both symbolic structure and evidence about likely operational success.
