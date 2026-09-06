@@ -21,6 +21,17 @@ This workspace manages research content that may exist in multiple forms at the 
 4. Do not edit build artifacts under `build/` unless the user explicitly asks for generated outputs to be inspected.
 5. Do not change class files, style files, or bibliography style assets unless the user asks for formatting or tooling changes.
 6. When adding new sections or files, follow the existing folder split by document type and chapter/contribution. If the file is too long and can be divided into sections, create separate files and name them with <filename>_<section>.md. eg: literature_01.md
+7. When there is a citation, check the paper name in the thesis/bibliography and if it's there, mention the correct reference name in the text. If the reference is missing, add the paper name to the unresolved_cite.txt
+
+## Citation Handling Rules
+
+1. Prefer exact `\cite{bibtex_key}` citations whenever the source already exists in a workspace bibliography file.
+2. Before leaving a citation unresolved, check the available bibliography files in the thesis and any relevant paper folder for an existing BibTeX entry or matching title.
+3. If an exact BibTeX key cannot be found, leave a trackable inline placeholder in the text using the paper title or a short descriptive label, and record the same item in `thesis/unresloved_cite.txt`.
+4. When a placeholder is later resolved to a BibTeX key, replace the inline placeholder with `\cite{bibtex_key}` and remove the matching item from `thesis/unresloved_cite.txt`.
+5. Do not invent BibTeX keys, paper titles, or citation mappings that are not present in the workspace sources.
+6. Keep unresolved citations grouped by relevant section or contribution in `thesis/unresloved_cite.txt` so unrelated items do not get mixed together.
+
 
 ## Source-of-Truth Change Rules
 
