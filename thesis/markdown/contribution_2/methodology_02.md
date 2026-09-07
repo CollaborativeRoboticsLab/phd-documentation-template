@@ -1,12 +1,12 @@
 # Data To Knowledge Store
 
-This document describes how input data is inserted into the experience-side knowledge store. It follows the representation defined in [Knowledge Representation for Robotic Experience](03_01_knowledge_representation.md): two linked graphs that share stable capability and context IDs while keeping their roles separate.
+This document describes how input data is inserted into the experience-side knowledge store. It follows the representation defined in [Knowledge Representation for Robotic Experience](methodology_01.md): two linked graphs that share stable capability and context IDs while keeping their roles separate.
 
 - **Semantic graph** for meaning, relationships, retrieval context, and capability descriptions
 
 - **Statistical graph** for empirical runtime evidence used by planning and RAPFS estimation.
 
-The companion document [Knowledge Store To RAPFS](03_05_knowledge_to_rapfs.md) describes how these stored representations are read back out and used to calculate the Risk-Aware Plan Feasibility Score (RAPFS) for candidate plans.
+The companion document [Knowledge Store To RAPFS](methodology_05.md) describes how these stored representations are read back out and used to calculate the Risk-Aware Plan Feasibility Score (RAPFS) for candidate plans.
 
 ## Source Inputs
 

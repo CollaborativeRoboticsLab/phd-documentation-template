@@ -1,3 +1,5 @@
 ## Conclusion
 
-This section contains placeholder text for the Contribution 2 conclusion. Replace it with a concise summary of findings, main technical contributions, and the next transition point in the thesis.
+Contribution 2 defines Experience as a planning layer that sits between capability discovery and execution and attempts to make generative robot planning more selective, evidence-aware, and fault-tolerant before a plan is run. The chapter brings together a layered fault-tolerance literature review, a graph-based knowledge representation for semantic and empirical execution evidence, and a Risk-Aware Plan Feasibility Score that ranks candidate plans using estimated success, time, energy, fault burden, resource considerations, and epistemic uncertainty.
+
+The current markdown chapter already captures the conceptual and methodological core of the contribution, but the empirical results still need to be consolidated into the thesis-facing results section. As that evidence is synchronized, this conclusion should remain the chapter's closing anchor: it should summarise what Experience contributes beyond Capabilities2 and GPSFSM, state what parts of RAPFS are specified versus implemented, and set up the transition into the later thesis-wide results and conclusion chapters.

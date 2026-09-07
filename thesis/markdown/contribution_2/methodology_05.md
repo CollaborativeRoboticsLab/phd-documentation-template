@@ -1,8 +1,8 @@
 # Knowledge Store To RAPFS
 
-This document describes how information stored in the experience-side knowledge store is used to calculate the Risk-Aware Plan Feasibility Score (RAPFS). It is the read-side companion to [Data To Knowledge Store](03_02_data_to_knowledge.md), which describes how semantic and statistical evidence are inserted into the representation defined in [Knowledge Representation for Robotic Experience](03_01_knowledge_representation.md).
+This document describes how information stored in the experience-side knowledge store is used to calculate the Risk-Aware Plan Feasibility Score (RAPFS). It is the read-side companion to [Data To Knowledge Store](methodology_02.md), which describes how semantic and statistical evidence are inserted into the representation defined in [Knowledge Representation for Robotic Experience](methodology_01.md).
 
-RAPFS itself is defined in [Risk-Aware Plan Feasibility Score](03_04_risk_aware_plan_score.md). This document focuses on the operational bridge from stored knowledge to the terms in that score.
+RAPFS itself is defined in [Risk-Aware Plan Feasibility Score](methodology_04.md). This document focuses on the operational bridge from stored knowledge to the terms in that score.
 
 ## Inputs And Outputs
 

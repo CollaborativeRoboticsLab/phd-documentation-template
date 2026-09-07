@@ -1,3 +1,5 @@
 ## Results and Discussion
 
-This section contains placeholder text for the Contribution 2 results. Replace it with experimental outcomes, analysis, ablation studies, and discussion of limitations or unexpected behaviour.
+This section is the canonical landing point for the evaluation narrative of Contribution 2. It should consolidate the evidence that tests whether the Experience architecture and the Risk-Aware Plan Feasibility Score improve plan selection before execution, how well the proposed knowledge-store and scoring pipeline align with the currently available supervisor data, and which assumptions remain unvalidated.
+
+At the moment, the chapter's strongest material is concentrated in the literature and methodology subsections rather than in standalone results subsections. That means this file currently functions as a chapter-level assembly point rather than a completed empirical section. When the evaluation material is synchronized into the markdown chapter, this section should bring together experimental outcomes, ablations, calibration checks, failure cases, and implementation limitations in one place rather than leaving them scattered across notes or paper-specific drafts.

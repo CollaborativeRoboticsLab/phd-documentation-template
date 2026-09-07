@@ -6,7 +6,7 @@ CoreGraphRAG of the Experience stack uses two linked representations as its know
 
 - The **statistical graph** contains empirical performance data and focuses on things like: how has this capability actually performed under comparable conditions? was it successful, how long did it take, what resources did it consume, and what faults were observed?
 
-The Data insertion path to the knowledge store is described in [Data To Knowledge Store](03_02_data_to_knowledge.md). The data read path into the planner score is described in [Knowledge Store To RAPFS](03_05_knowledge_to_rapfs.md). The score itself is defined in [Risk-Aware Plan Feasibility Score](03_04_risk_aware_plan_score.md).
+The Data insertion path to the knowledge store is described in [Data To Knowledge Store](methodology_02.md). The data read path into the planner score is described in [Knowledge Store To RAPFS](methodology_05.md). The score itself is defined in [Risk-Aware Plan Feasibility Score](methodology_04.md).
 
 ## Design Goals
 
