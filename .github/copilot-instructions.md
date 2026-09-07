@@ -20,8 +20,9 @@ This workspace manages research content that may exist in multiple forms at the 
 3. For paper content derived from thesis sections, preserve venue-specific framing while keeping research facts, claims, and citations consistent with the canonical source.
 4. Do not edit build artifacts under `build/` unless the user explicitly asks for generated outputs to be inspected.
 5. Do not change class files, style files, or bibliography style assets unless the user asks for formatting or tooling changes.
-6. When adding new sections or files, follow the existing folder split by document type and chapter/contribution. If the file is too long and can be divided into sections, create separate files and name them with <filename>_<section>.md. eg: literature_01.md
-7. When there is a citation, check the paper name in the thesis/bibliography and if it's there, mention the correct reference name in the text. If the reference is missing, add the paper name to the unresolved_cite.txt
+6. When adding new sections or files, follow the existing folder split by document type and chapter/contribution. If the file is too long and can be divided into sections, create separate files and name them with a stable section stem plus an ordered numeric suffix, for example `literature_01.md` or `methodology_03.md`.
+7. In thesis markdown folders, numbered files such as `literature_01.md` are intentional canonical subsection content, not temporary fragments. Preserve their numbering, keep one focused subsection per file, and treat any matching top-level file such as `literature.md` or `methodology.md` as a short roadmap or assembly anchor for that section.
+8. When there is a citation, check the paper name in the thesis/bibliography and if it's there, mention the correct reference name in the text. If the reference is missing, add the paper name to the unresolved_cite.txt
 
 ## Citation Handling Rules
 
