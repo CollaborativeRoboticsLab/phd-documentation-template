@@ -281,6 +281,11 @@ def format_resolved_sections(sections: OrderedDict[str, list[dict]]) -> str:
             lines.append(f"    title: {ref['title']}")
             lines.append(f"    cite: \\cite{{{ref['key']}}}")
             lines.append(f"    note: {ref['note']}")
+            if ref.get("bibtex"):
+                lines.append("    bibtex: <<<")
+                for bibtex_line in ref["bibtex"].splitlines():
+                    lines.append(f"        {bibtex_line}")
+                lines.append("    >>>")
             lines.append("")
         if not refs:
             lines.append("")
@@ -310,6 +315,13 @@ def build_existing_bib_indexes(bib_path: Path) -> tuple[set[str], dict[str, str]
     return existing_dois, doi_to_key, title_to_key
 
 
+def find_repo_entry_by_key(repo_entries: list[dict], cite_key: str) -> dict | None:
+    for entry in repo_entries:
+        if entry["key"] == cite_key:
+            return entry
+    return None
+
+
 def resolve_reference_to_bib(raw_ref: str, doi_to_key: dict[str, str], title_to_key: dict[str, str], repo_entries: list[dict]):
     local_entry = find_local_bib_candidate(raw_ref, repo_entries)
     if local_entry is not None:
@@ -319,6 +331,7 @@ def resolve_reference_to_bib(raw_ref: str, doi_to_key: dict[str, str], title_to_
                 "status": "existing",
                 "key": local_title_key,
                 "title": local_entry["title"],
+                "bibtex": local_entry["raw"],
                 "score": 1.0,
                 "note": f"matched existing local title from {local_entry['path'].relative_to(ROOT)}",
             }
@@ -329,6 +342,7 @@ def resolve_reference_to_bib(raw_ref: str, doi_to_key: dict[str, str], title_to_
                 "status": "existing",
                 "key": doi_to_key[doi_norm],
                 "title": local_entry["title"],
+                "bibtex": local_entry["raw"],
                 "score": 1.0,
                 "note": f"matched existing local DOI from {local_entry['path'].relative_to(ROOT)}",
             }
@@ -359,10 +373,12 @@ def resolve_reference_to_bib(raw_ref: str, doi_to_key: dict[str, str], title_to_
     if cr and cr["score"] >= RESOLUTION_CONFIDENCE_THRESHOLD:
         doi_norm = (cr["doi"] or "").strip().lower()
         if doi_norm and doi_norm in doi_to_key:
+            existing_entry = find_repo_entry_by_key(repo_entries, doi_to_key[doi_norm])
             return {
                 "status": "existing",
                 "key": doi_to_key[doi_norm],
                 "title": cr["title"],
+                "bibtex": existing_entry["raw"] if existing_entry else None,
                 "score": cr["score"],
                 "note": f"matched existing DOI {doi_norm}",
             }
@@ -394,10 +410,12 @@ def resolve_reference_to_bib(raw_ref: str, doi_to_key: dict[str, str], title_to_
     if ax and ax["score"] >= RESOLUTION_CONFIDENCE_THRESHOLD:
         normalized_title = normalize(ax["title"])
         if normalized_title in title_to_key:
+            existing_entry = find_repo_entry_by_key(repo_entries, title_to_key[normalized_title])
             return {
                 "status": "existing",
                 "key": title_to_key[normalized_title],
                 "title": ax["title"],
+                "bibtex": existing_entry["raw"] if existing_entry else None,
                 "score": ax["score"],
                 "note": "matched existing arXiv title",
             }
@@ -883,6 +901,7 @@ def run_sync_unresolved_markdown(input_path: Path, bib_path: Path, flagged_path:
                 "title": result["title"],
                 "key": result["key"],
                 "note": result["note"],
+                "bibtex": result.get("bibtex"),
             })
             if result["status"] == "new":
                 bib_entries.append(result["bibtex"])

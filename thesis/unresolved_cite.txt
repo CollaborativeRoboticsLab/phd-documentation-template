@@ -1,0 +1,19 @@
+# Unresolved Citations
+
+## Contribution 1
+Semantic Intelligence: Integrating GPT-4 with A* Planning in Low-Cost Robotics
+Can Large Language Models Help Developers with Robotic Finite State Machine Modification?
+
+## Contribution 2
+On Fault Detection and Diagnosis in Robotic Systems
+SAFE: SAFE: Structural Assurance for Frontier Models (or Secure and Autonomous Framework for Robotics)
+FAIL-Detect: FAIL-Detect: Failure Detection and Isolation in Autonomous Robot Navigations
+Guardian: Guardian: Executable Safety Grounding for LLM Robot Planners
+I-FailSense: I-FailSense: Intelligent Failure Sensing and Mitigation in Autonomous Robotic Systems
+RoboReflect: RoboReflect: Automated Failure Detection and Reflection for LLM-Based Robotic Planning
+VLA-in-the-Loop: VLA-in-the-Loop: Contingency Planning and Real-Time Error Correction for Vision-Language-Action Models
+VerifyLLM: VerifyLLM: Formal Verification of Large Language Model Outputs for Safety-Critical Systems
+RoboGuard: RoboGuard: Guardian Agent for Enhancing Safety in LLM-Based Robot Systems
+AutoRT: AutoRT: Embodied AI Foundation Models for Large-Scale Robot Orchestration
+LLM Planning-Safety: Ensuring Safety and Correctness in LLM-Based Robot Task Planning
+CaStL: CaStL: Control and Safety Architecture for Learned Robot Behaviours

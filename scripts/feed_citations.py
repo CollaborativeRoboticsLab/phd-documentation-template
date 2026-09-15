@@ -2,8 +2,8 @@
 """
 Feed resolved citations from thesis/resolved_cite.txt into a target .bib file.
 
-This stage removes successfully processed entries from the resolved file, so the
-file acts as a queue between verification and bibliography ingestion.
+This stage keeps the resolved file unchanged so the same resolved citation set
+can be fed into more than one target bibliography.
 
 USAGE:
     python feed_citations.py thesis/resolved_cite.txt --bib thesis/latex/Bibliography.bib
@@ -112,10 +112,23 @@ def parse_resolved_sections(path: Path) -> OrderedDict[str, list[dict]]:
     sections: OrderedDict[str, list[dict]] = OrderedDict()
     current_section = None
     current_entry = None
+    collecting_bibtex = False
+    bibtex_lines: list[str] = []
 
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         line = raw_line.rstrip()
         stripped = line.strip()
+        if collecting_bibtex:
+            if stripped == ">>>":
+                current_entry["bibtex"] = "\n".join(bibtex_lines)
+                collecting_bibtex = False
+                bibtex_lines = []
+            elif line.startswith("        "):
+                bibtex_lines.append(line[8:])
+            else:
+                collecting_bibtex = False
+                bibtex_lines = []
+            continue
         if not stripped:
             continue
         if stripped.startswith("# "):
@@ -131,6 +144,10 @@ def parse_resolved_sections(path: Path) -> OrderedDict[str, list[dict]]:
             if current_entry is None or ":" not in stripped:
                 continue
             field_name, _, field_value = stripped.partition(":")
+            if field_name.strip() == "bibtex" and field_value.strip() == "<<<":
+                collecting_bibtex = True
+                bibtex_lines = []
+                continue
             current_entry[field_name.strip()] = field_value.strip()
             continue
 
@@ -207,6 +224,13 @@ def find_repo_entry(cite_key: str, title: str, repo_entries: list[dict]) -> dict
     return None
 
 
+def split_key_from_bibtex(raw_bibtex: str) -> str | None:
+    match = re.search(r"@\w+\s*\{\s*([^,\s]+)", raw_bibtex)
+    if not match:
+        return None
+    return match.group(1).strip()
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("resolved", type=Path, nargs="?", default=DEFAULT_RESOLVED,
@@ -225,44 +249,54 @@ def main():
     repo_entries = iter_repo_bib_entries()
     existing_keys, existing_titles = build_target_bib_indexes(args.bib)
 
-    remaining_sections: OrderedDict[str, list[dict]] = OrderedDict()
     appended_entries: list[str] = []
     processed_count = 0
     skipped_count = 0
+    missing_count = 0
 
     for section, refs in sections.items():
-        remaining_sections[section] = []
         for ref in refs:
             cite_key = parse_cite_key(ref.get("cite", ""))
             title = ref.get("title", "")
             if not cite_key or not title:
                 print(f"[{section}] keeping unresolved resolved-entry record for {ref.get('raw_ref', '(unknown)')}: missing cite/title metadata")
-                remaining_sections[section].append(ref)
+                missing_count += 1
                 continue
 
-            repo_entry = find_repo_entry(cite_key, title, repo_entries)
-            if repo_entry is None:
+            raw_bibtex = ref.get("bibtex")
+            if raw_bibtex:
+                embedded_key = split_key_from_bibtex(raw_bibtex)
+                if embedded_key and embedded_key != cite_key:
+                    print(f"[{section}] keeping {ref['raw_ref']}: embedded BibTeX key {embedded_key} does not match {cite_key}")
+                    missing_count += 1
+                    continue
+            else:
+                repo_entry = find_repo_entry(cite_key, title, repo_entries)
+                raw_bibtex = repo_entry["raw"] if repo_entry else None
+
+            if raw_bibtex is None:
                 print(f"[{section}] keeping {ref['raw_ref']}: could not find BibTeX for key {cite_key}")
-                remaining_sections[section].append(ref)
+                missing_count += 1
                 continue
 
-            if cite_key in existing_keys or repo_entry["norm_title"] in existing_titles:
+            normalized_title = normalize(title)
+            if cite_key in existing_keys or normalized_title in existing_titles:
                 print(f"[{section}] processed existing entry {cite_key}")
                 processed_count += 1
                 skipped_count += 1
                 continue
 
             print(f"[{section}] append {cite_key} to {args.bib}")
-            appended_entries.append(repo_entry["raw"])
+            appended_entries.append(raw_bibtex)
             existing_keys.add(cite_key)
-            if repo_entry["norm_title"]:
-                existing_titles.add(repo_entry["norm_title"])
+            if normalized_title:
+                existing_titles.add(normalized_title)
             processed_count += 1
 
     if args.dry_run:
         print(f"[dry-run] would append {len(appended_entries)} entries -> {args.bib}")
-        print(f"[dry-run] would remove {processed_count} processed entries from {args.resolved}")
-        print(f"[dry-run] {len([ref for refs in remaining_sections.values() for ref in refs])} entries would remain queued")
+        print(f"[dry-run] would keep {args.resolved} unchanged")
+        print(f"[dry-run] {missing_count} entries are still missing embedded or discoverable BibTeX")
         return
 
     if appended_entries:
@@ -272,11 +306,9 @@ def main():
                 handle.write("\n\n")
             handle.write("\n\n".join(appended_entries))
 
-    args.resolved.write_text(format_resolved_sections(remaining_sections), encoding="utf-8")
-
     print(f"Appended {len(appended_entries)} entries -> {args.bib}")
-    print(f"Removed {processed_count} processed entries from {args.resolved}")
-    print(f"{len([ref for refs in remaining_sections.values() for ref in refs])} entries remain queued")
+    print(f"Kept {args.resolved} unchanged")
+    print(f"{missing_count} entries are still missing embedded or discoverable BibTeX")
     if skipped_count:
         print(f"{skipped_count} processed entries were already present in the target bibliography")
 

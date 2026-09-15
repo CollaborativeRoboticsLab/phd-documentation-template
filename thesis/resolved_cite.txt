@@ -1,0 +1,114 @@
+# Resolved Citations
+
+## Contribution 1
+
+## Contribution 2
+LogLLM: LogLLM: Log Analysis with Large Language Models
+    status: new
+    title: Realistic Log Generation through Large Language Models: Bridging Data Gaps in Log Analysis
+    cite: \cite{Gopal_2025}
+    note: verified via Crossref score 0.85
+    bibtex: <<<
+        @article{Gopal_2025, title={Realistic Log Generation through Large Language Models: Bridging Data Gaps in Log Analysis}, volume={19}, ISSN={2581-9372}, url={http://dx.doi.org/10.64992/jmdet.vol.19.issue.1.2}, DOI={10.64992/jmdet.vol.19.issue.1.2}, number={1}, journal={Journal of Multi Disciplinary Engineering Technologies}, publisher={Bharatividyapeeth’s College of Engineering, New Delhi}, author={Gopal, Athira and Bajpai, Supriya}, year={2025}, month=Dec, pages={13–24} }
+    >>>
+
+Towards Reliable LLM-based Robot Planning via Combined Uncertainty Estimation: Towards Reliable LLM-based Robot Planning via Combined Uncertainty Estimation
+    status: new
+    title: Towards Reliable LLM-based Robots Planning via Combined Uncertainty Estimation
+    cite: \cite{Yin_2025}
+    note: verified via Crossref score 0.99
+    bibtex: <<<
+        @inproceedings{Yin_2025, series={NeurIPS 2025}, title={Towards Reliable LLM-based Robots Planning via Combined Uncertainty Estimation}, url={http://dx.doi.org/10.52202/085713-2600}, DOI={10.52202/085713-2600}, booktitle={Advances in Neural Information Processing Systems 38}, publisher={Neural Information Processing Systems Foundation, Inc. (NeurIPS)}, author={Yin, Shiyuan and Bai, Chenjia and Zhang, Zihao and Jin, Junwei and Zhang, Xinxin and Zhang, Chi and Li, Xuelong}, year={2025}, pages={86193–86221}, collection={NeurIPS 2025} }
+    >>>
+
+FailSafe: FailSafe: Toward Safe and Robust LLM-Based Robot Planning
+    status: new
+    title: failsafe
+    cite: \cite{1}
+    note: verified via Crossref score 1.00
+    bibtex: <<<
+        @misc{1, url={http://dx.doi.org/10.1007/springerreference_14166}, DOI={10.1007/springerreference_14166}, journal={SpringerReference}, publisher={Springer-Verlag} }
+    >>>
+
+STAR: STAR: Self-Taught Reasoner / Bootstrapping Reasoning with Reasoning (or Spatio-Temporal Robot Planning)
+    status: new
+    title: STaR: Bootstrapping Reasoning with Reasoning
+    cite: \cite{Zelikman_2022}
+    note: verified via Crossref score 1.00
+    bibtex: <<<
+        @inproceedings{Zelikman_2022, series={NeurIPS 2022}, title={STaR: Bootstrapping Reasoning with Reasoning}, url={http://dx.doi.org/10.52202/068431-1126}, DOI={10.52202/068431-1126}, booktitle={Advances in Neural Information Processing Systems 35}, publisher={Neural Information Processing Systems Foundation, Inc. (NeurIPS)}, author={Zelikman, Eric and Wu, Yuhuai and Mu, Jesse and Goodman, Noah}, year={2022}, pages={15476–15488}, collection={NeurIPS 2022} }
+    >>>
+
+RepV: RepV: Representation and Verification for Safe Robotic Manipulation
+    status: new
+    title: Automatic relational scene representation for safe robotic manipulation tasks
+    cite: \cite{Mojtahedzadeh_2013}
+    note: verified via Crossref score 0.80
+    bibtex: <<<
+        @inproceedings{Mojtahedzadeh_2013, title={Automatic relational scene representation for safe robotic manipulation tasks}, url={http://dx.doi.org/10.1109/iros.2013.6696522}, DOI={10.1109/iros.2013.6696522}, booktitle={2013 IEEE/RSJ International Conference on Intelligent Robots and Systems}, publisher={IEEE}, author={Mojtahedzadeh, Rasoul and Bouguerra, Abdelbaki and Lilienthal, Achim J.}, year={2013}, month=Nov, pages={1335–1340} }
+    >>>
+
+LAMARS: LAMARS: Language Model-Augmented Robotic Safety and Planning
+    status: new
+    title: Lamars, D.
+    cite: \cite{2011}
+    note: verified via Crossref score 0.86
+    bibtex: <<<
+        @misc{2011, d._2011, url={http://dx.doi.org/10.1093/benz/9780199773787.article.b00103395}, DOI={10.1093/benz/9780199773787.article.b00103395}, journal={Benezit Dictionary of Artists}, publisher={Oxford University Press}, year={2011}, month=Oct }
+    >>>
+
+UKF Fault-Detection: Fault Detection and Isolation for Robotic Manipulators using Unscented Kalman Filters
+    status: new
+    title: Linear Time-Varying Fault Detection and Isolation for Robotic Manipulators
+    cite: \cite{Schorer_2025}
+    note: verified via Crossref score 0.84
+    bibtex: <<<
+        @inproceedings{Schorer_2025, title={Linear Time-Varying Fault Detection and Isolation for Robotic Manipulators}, url={http://dx.doi.org/10.1109/systol66549.2025.11267362}, DOI={10.1109/systol66549.2025.11267362}, booktitle={2025 6th International Conference on Control and Fault-Tolerant Systems (SysTol)}, publisher={IEEE}, author={Schorer, Sophia and Ossmann, Daniel}, year={2025}, month=Oct, pages={222–227} }
+    >>>
+
+NN Actuator-Monitoring: Neural Network-Based Actuator Fault Detection and Isolation for Robot Manipulators
+    status: new
+    title: Neural Network Based Adaptive Actuator Fault Detection Algorithm for Robot Manipulators
+    cite: \cite{Cho_2018}
+    note: verified via Crossref score 0.88
+    bibtex: <<<
+        @article{Cho_2018, title={Neural Network Based Adaptive Actuator Fault Detection Algorithm for Robot Manipulators}, volume={95}, ISSN={1573-0409}, url={http://dx.doi.org/10.1007/s10846-018-0781-0}, DOI={10.1007/s10846-018-0781-0}, number={1}, journal={Journal of Intelligent &amp; Robotic Systems}, publisher={Springer Science and Business Media LLC}, author={Cho, Chang Nho and Hong, Ji Tae and Kim, Hong Ju}, year={2018}, month=Jan, pages={137–147} }
+    >>>
+
+Passive Listener Residual-Monitoring: Passive Analytical Redundancy and Residual Generation for Robot Fault Detection
+    status: new
+    title: Fault residual generation via nonlinear analytical redundancy
+    cite: \cite{Leuschen_2005}
+    note: verified via Crossref score 0.87
+    bibtex: <<<
+        @article{Leuschen_2005, title={Fault residual generation via nonlinear analytical redundancy}, volume={13}, ISSN={1063-6536}, url={http://dx.doi.org/10.1109/tcst.2004.839577}, DOI={10.1109/tcst.2004.839577}, number={3}, journal={IEEE Transactions on Control Systems Technology}, publisher={Institute of Electrical and Electronics Engineers (IEEE)}, author={Leuschen, M.L. and Walker, I.D. and Cavallaro, J.R.}, year={2005}, month=May, pages={452–458} }
+    >>>
+
+UPPAAL: UPPAAL in a Nutshell: A Tool for Modelling, Simulation and Verification of Real-Time Systems
+    status: new
+    title: UPPAAL—a Tool Suite for Automatic Verification of Real–Time Systems
+    cite: \cite{Bengtsson_1996}
+    note: verified via Crossref score 0.86
+    bibtex: <<<
+        @article{Bengtsson_1996, title={UPPAAL—a Tool Suite for Automatic Verification of Real–Time Systems}, volume={3}, ISSN={0909-0878}, url={http://dx.doi.org/10.7146/brics.v3i58.18769}, DOI={10.7146/brics.v3i58.18769}, number={58}, journal={BRICS Report Series}, publisher={Det Kgl. Bibliotek/Royal Danish Library}, author={Bengtsson, Johan and Larsen, Kim G. and Larsson, Fredrik and Pettersson, Paul and Yi, Wang}, year={1996}, month=June,
+          abstract = {Uppaal is a tool suite for automatic verification of safety and bounded liveness properties of real-time systems modeled as networks of timed automata. It includes: a graphical interface that supports graphical and textual representations of networks of timed automata, and automatic transformation from graphical representations to textual format, a compiler that transforms a certain class of linear hybrid systems to networks of timed automata, and a model-checker which is implemented based on constraint-solving techniques. Uppaal also supports diagnostic model-checking providing diagnostic information in case verification of a particular real-time systems fails. The current version of Uppaal is available on the World Wide Web via the Uppaal home page http://www.docs.uu.se/docs/rtmv/uppaal.},
+        }
+    >>>
+
+PRISM: PRISM: Probabilistic Symbolic Model Checker
+    status: new
+    title: Symbolic execution for probabilistic programs: path probabilities testing and verification in prism model checker
+    cite: \cite{Yavvari}
+    note: verified via Crossref score 1.00
+    bibtex: <<<
+        @phdthesis{Yavvari, title={Symbolic execution for probabilistic programs: path probabilities testing and verification in prism model checker}, url={http://dx.doi.org/10.31274/td-20260804-208}, DOI={10.31274/td-20260804-208}, school={Iowa State University}, author={Yavvari, Saitej} }
+    >>>
+
+AutoTAMP: AutoTAMP: Autononous Task and Motion Planning using Large Language Models
+    status: new
+    title: Onto-LLM-TAMP: Knowledge-oriented Task and Motion Planning using Large Language Models
+    cite: \cite{Ud_Din_2025}
+    note: verified via Crossref score 0.84
+    bibtex: <<<
+        @article{Ud_Din_2025, title={Onto-LLM-TAMP: Knowledge-oriented Task and Motion Planning using Large Language Models}, url={http://dx.doi.org/10.2139/ssrn.5654741}, DOI={10.2139/ssrn.5654741}, publisher={Elsevier BV}, author={Ud Din, Muhayy and Rosell, Jan and Akram, Waseem and Zaplana, Isiah and Roa, Maximo A. and Hussain, Irfan}, year={2025} }
+    >>>

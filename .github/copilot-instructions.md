@@ -61,3 +61,9 @@ When working on documentation tasks in this workspace, Copilot should explicitly
 2. whether parallel copies exist
 3. whether the tracker was updated or should be updated
 4. what remains unsynchronized, if anything
+
+## Bibliography Management
+
+1. `thesis/latex/Bibliography.bib` is the primary BibTeX file for the Project and Thesis. All citations should be added here first.
+2. Each paper has its own local BibTeX file for managing citations specific to that paper at `papers/<paper-dir>/references.bib`. This will be packaged with the paper for submission and should only contain citations unique to that paper.
+3. When transferring information between papers and thesis due to source-of-truth changes, ensure that all relevant citations are updated consistently in both `thesis/latex/Bibliography.bib` and the local paper BibTeX files.

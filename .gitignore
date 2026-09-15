@@ -38,6 +38,7 @@
 
 # Editor specific files (VS Code specific examples if any, though less common for standard LaTeX)
 # .vscode/
+__pycache__/
 
 # If you have specific build directories, you might ignore them too, e.g.:
 build/

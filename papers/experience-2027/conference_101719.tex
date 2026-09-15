@@ -13,6 +13,7 @@
 \usepackage{graphicx}
 \graphicspath{ {./figures/} }
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs}
 
@@ -30,7 +31,7 @@
 \maketitle
 
 \begin{abstract}
-Generative robotic behaviour planning systems can produce plausible behaviour plans from natural-language tasks, but they still tend to treat generated plans as equally executable until failure occurs at runtime. This is a weak point for deployed robots, because a plan may be semantically relevant while still being slow, fragile, poorly grounded in available behaviour evidence, or mismatched to the robot's state. We introduce \textit{Experience}, a planning layer that sits between behaviour discovery and execution and performs pre-execution plan assessment for generated behaviour execution plans. Experience combines a semantic graph for behaviour and task meaning with a statistical graph for empirical execution evidence, then ranks candidate plans with a Risk-Aware Plan Feasibility Score (RAPFS) that focuses on predicted success, time, energy, fault burden, resource considerations, and epistemic uncertainty. We utilize \textit{Fabric} as a generative behaviour planning system and extend is functionality using the proposed \textit{Experience} stack. We compare the standalone \textit{Fabric} system against the Experience-augmented Fabric system to evaluate the improvements of behaviour plan generation using Experience.
+Generative robotic behaviour planning systems can produce plausible behaviour plans from natural-language tasks, but they still tend to treat generated plans as equally executable until failure occurs at runtime. This is a weak point for deployed robots, because a plan may be semantically relevant while still be slow, fragile, poorly grounded in available behaviour evidence, or mismatched to the robot's state. We introduce \textit{Experience}, a planning layer that sits between behaviour discovery and execution and performs pre-execution plan assessment for generated behaviour execution plans. Experience combines a semantic graph for behaviour and task meaning with a statistical graph for empirical execution evidence, then ranks candidate plans with a Risk-Aware Plan Feasibility Score (RAPFS) that focuses on predicted success, time, energy, fault burden, resource considerations, and epistemic uncertainty. We utilize \textit{Fabric} as a generative behaviour planning system and extend its functionality using the proposed \textit{Experience} stack. We compare the standalone \textit{Fabric} system against the Experience-augmented Fabric system to evaluate whether evidence-aware pre-execution assessment improves candidate plan selection.
 \end{abstract}
 
 \begin{keywords}
@@ -39,33 +40,39 @@ robot planning, pre-execution verification, ROS2, risk-aware planning, knowledge
 
 \section{Introduction}
 
-Traditional robotic planning systems often rely on pre-defined models and deterministic execution pipelines, which can limit their adaptability and robustness in dynamic environments. These systems typically execute plans under limited variability in real-world conditions, leading to failures when unexpected situations arise. Recently with the popularity of Generative AI, robotics has focused on using LLMs as an potential planning entity to solve these unexpected situations. In \textit{Do as I can, Not as I say} paper \cite{ahn_as_2022} they propose using LLM's semantic knowledge along with robot skills to improve the robot adaptation to dynamic environments. BTGenbot \cite{izzo_btgenbot_2024} focuses on finetuning 7B local LLM model for generating Behaviour Trees while LLM-Brain \cite{lykov_llm-brain_2023} and LLM-BT \cite{zhou_llm-bt_2024}, focus on ... . Fabric is a partially specified FSM \cite{ratnayake2026generativepartiallyspecifiedfinite} that provides capability based generative behaviour planning using graph as a medium.
+Autonomous robots operating in dynamic environments require planning systems that can do more than produce semantically plausible action sequences. A plan that looks reasonable in language may still be a poor operational choice when the robot is low on battery, when a required functionality has recently failed, when a dependency chain is poorly observed, or when the current scene differs from the contexts under which the robot has previously succeeded. This distinction matters more in long-horizon and open-ended tasks, where the cost of discovering infeasibility only after execution has begun can be high in time, energy, and recovery effort.
 
-One of the caveats of these approaches is that they are limited by the context window of the LLM. ... THese generative robotics pipelines can produce plans that read well in language, yet they often forward every available capability description or telemetry fragment into a prompt and defer most feasibility questions until execution time. That pattern is expensive, hard to audit, and unsafe when the robot is operating under resource constraints or partial knowledge.
+Recent progress in large language models has made generative robot planning substantially more practical. SayCan showed that language-model planning improves when abstract task semantics are grounded in executable robot skills rather than treated as free-form text \cite{ahn_as_2022}. SayPlan extended this idea to larger environments by using 3D scene graphs, semantic retrieval, and iterative replanning for long-horizon tasks \cite{rana_sayplan_2023}. Behaviour-tree-based systems such as BTGenBot, LLM-BT, and LLM-as-BT-Planner further improved the planning surface by generating structured intermediate plans that are easier to inspect and execute than raw code \cite{izzo_btgenbot_2024, zhou_llm-bt_2024, ao_llm-as-bt-planner_2025}. \textit{Fabric} system \cite{ratnayake2026generativepartiallyspecifiedfinite} contributes to this line of work by providing a graph-based generative behaviour planning framework built around partially specified finite-state-machine semantics and the Capabilities2 execution layer.
 
-Recent work has shown that large language models can support long-horizon planning by grounding task descriptions in robot capabilities or scene structure \cite{ahn_as_2022, rana_sayplan_2023}. Behaviour-tree-based systems have pushed this further by generating structured intermediate plans rather than free-form code \cite{izzo_btgenbot_2024, zhou_llm-bt_2024, ao_llm-as-bt-planner_2025}. However, these systems still leave an important gap: candidate plans are rarely ranked using accumulated evidence about how capabilities perform under comparable contexts before execution begins. As a result, the planner may prefer a semantically plausible plan even when the robot has strong prior evidence that the same capability chain is unreliable, too slow, or poorly observed.
+However, most generative planning pipelines still prioritise generation over assessment. They typically retrieve skill descriptions, context, and occasionally telemetry to support prompt construction, but they rarely impose a distinct pre-execution stage that compares multiple candidate plans against accumulated evidence of how those capabilities perform under similar conditions. As a result, the planner may still select a semantically relevant plan even when historical evidence suggests that the same skill chain is unreliable, overly costly, or weakly supported by prior observations. In practical deployment this means that plan feasibility is often tested only by live execution.
 
-Our proposed work augments it with an evidence-aware planning stage. We claim is that pre-execution plan assessment should combine two distinct forms of knowledge: semantic structure, which explains why a behaviour is relevant to the task, and empirical evidence, which estimates how that capability has behaved in comparable contexts. Keeping those roles separate is important because semantic similarity is not equivalent to execution reliability.
+This paper argues that pre-execution plan assessment should be treated as its own planning layer rather than as a side effect of prompting. We propose that this layer should combine two distinct forms of knowledge. The first is semantic structure, which captures what a skill means and does, how it relates to the task, and how skills are composed. The second is empirical evidence, which captures how those capabilities have actually behaved at runtime. These roles should remain separate because semantic similarity is not equivalent to execution reliability. A capability can be an excellent semantic match for a request and still be a poor execution choice if it is slow, failure-prone, or poorly observed in the current context.
 
-We implement the proposed concepts under Experience stack, which is a behaviour-planning extension of Fabric \cite{ratnayake2026generativepartiallyspecifiedfinite}. We utilize Capabilities2 \cite{pritchard_capabilities2_2025} as the behaviour orchestration layer. Experience sits between capability discovery and execution and is intended to consume semantic skill descriptions from Capabilities2 \cite{pritchard_capabilities2_2025, woodall_ros_2014}, observe runtime evidence from the wider ROS 2 system, and improve plan selection before a candidate plan is ranked, selected and dispatched to execution by the Fabric. 
+We implement this idea through the \textit{Experience} stack, a ROS2 planning extension that sits between skill/behaviour discovery and execution. Experience uses Capabilities2 \cite{pritchard_capabilities2_2025, woodall_ros_2014} as the skill/behaviour description and orchestration layer, consumes candidate plans produced for \textit{Fabric} \cite{ratnayake2026generativepartiallyspecifiedfinite}, and ingests runtime evidence from the \textit{Supervisor} stack. In this way, Experience is not a replacement for generative planning; it is an evidence-aware assessment layer that ranks candidate behaviour execution graphs before one is selected and dispatched.
 
-This paper makes three contributions. First, it defines a dual-graph knowledge representation consisting of linked semantic and statistical graphs for behaviour-centric robotic planning. Second, it formulates a Risk-Aware Plan Feasibility Score (RAPFS) that ranks candidate behaviour plans using predicted success, cost, fault burden, and uncertainty. Third, it provides an ROS2 based implementation of the proposed concepts and real world experiment results comparing pre-execution plan assessment against planner outputs that rely primarily on semantic generation alone.
+The main contributions of this paper are threefold. First, we define a dual-graph knowledge representation consisting of linked semantic and statistical graphs for behaviour-centric robotic planning. Second, we formulate a Risk-Aware Plan Feasibility Score (RAPFS) that ranks candidate behaviour plans using predicted success, execution cost, fault burden, and epistemic uncertainty under explicit feasibility constraints. Third, we present a ROS2 implementation built around Fabric, Capabilities2, Experience, and Supervisor, and use it to frame an experimental comparison between direct generative planning and evidence-aware pre-execution plan assessment.
 
 \section{Related Work}
 
-Generative robot planning has moved from direct code generation toward intermediate symbolic structures that can be checked or executed more reliably. SayCan and related systems demonstrated that language-model planning becomes more useful when high-level actions are grounded in embodied capabilities instead of being treated as pure text generation \cite{ahn_as_2022}. SayPlan extended this pattern with scene-graph-based retrieval and iterative refinement for long-horizon tasks \cite{rana_sayplan_2023}. These systems established the value of selective grounding, but they do not by themselves provide a general pre-execution score that compares multiple candidate execution graphs using accumulated runtime evidence.
+Generative robot planning has progressively shifted from direct action selection and code generation toward structured intermediate representations. SayCan grounded language-model suggestions in pretrained robot skills and their affordance values, showing that embodied skill grounding improves long-horizon task execution \cite{ahn_as_2022}. SayPlan extended this idea with hierarchical 3D scene-graph retrieval and iterative replanning, making LLM-based planning more scalable in larger environments \cite{rana_sayplan_2023}. ROS-LLM similarly framed LLM-assisted robot programming around structured reasoning, task feedback, and multiple execution modes, including sequences, behaviour trees, and state machines \cite{mower_ros-llm_2024}. These systems are important because they reduce purely textual hallucination, but they remain primarily generation-oriented. They help construct or adapt plans; they do not provide a general evidence-aware scoring layer that compares multiple candidate execution graphs before dispatch.
 
-Behaviour-tree generation systems make the intermediate representation more explicit. BTGenBot, LLM-BT, and LLM-as-BT-Planner show that structured behaviour plans can be generated, validated, and in some cases adapted during execution \cite{izzo_btgenbot_2024, zhou_llm-bt_2024, ao_llm-as-bt-planner_2025}. Their main strength is that the planner output is no longer opaque code. Their main limitation for the present problem is different: a valid plan syntax does not tell us whether the selected plan is the most reliable or feasible one for the current robot state, time budget, or evidence history.
+Behaviour-tree-based generation has become the most visible structured alternative to direct code output. BTGenBot fine-tunes lightweight local LLMs for BT generation and evaluates the resulting trees with syntax checks, a validation system, simulation, and real robot trials \cite{izzo_btgenbot_2024}. LLM-BT focuses on adaptive task execution by converting LLM-generated task steps into behaviour trees and updating those trees when environmental changes are detected \cite{zhou_llm-bt_2024}. LLM-as-BT-Planner presents a more complete generation-to-execution pipeline for behaviour-tree planning \cite{ao_llm-as-bt-planner_2025}, while VLM-driven BT extends the same idea to visual conditions so generated trees can react to image-grounded state checks \cite{wake_vlm-driven_2025}. These papers align strongly with the present work because they all move planning toward inspectable symbolic structures. Their common limitation for our purpose is not representational validity, but lack of a distinct pre-execution ranking stage that uses accumulated execution evidence to prefer one valid candidate over another.
 
-At the capability layer, the original ROS capabilities work and its ROS 2 successor address a different but necessary problem: how robot skills are described, loaded, and composed in a standard way \cite{woodall_ros_2014, pritchard_capabilities2_2025}. Experience builds on that foundation. Capabilities2 provides a structured representation of available robot functionality, but it is not itself a plan-ranking framework. Experience uses those descriptions together with execution evidence to estimate whether a candidate plan is likely to succeed before it is run.
+There is also a smaller but relevant line of work around execution representations and planning surfaces. The broader BT and FSM literature has repeatedly shown that representation choice affects modularity, reuse, and verification effort \cite{ghzouli_behavior_2023, iovino_programming_2022, iovino_comparison_2024}. Authors of the GPSFSM \cite{ratnayake2026generativepartiallyspecifiedfinite} argues that partially specified finite-state-machine semantics provide a more general execution graph than tree-only control structures for generative planning. Experience does not replace that representation; rather, it assumes the planner can already produce candidate execution graphs and addresses the next question, namely which candidate should be executed given current evidence.
 
-Recent work has been exploring the use of uncertainty measurements to predict whether a task can be achieved or not on the current robotic system. CURE \cite{yin2025reliablellmbasedrobotplanning} proposes a combined uncertainty estimation framework that differentiates between epistemic and intrinsic uncertainty, providing more reliable assessments for LLM-based robot planning. SAFE \cite{guan2025logllmlogbasedanomalydetection} introduces a log-based anomaly detection approach using large language models to enhance the reliability of software systems by identifying potential failures through log analysis. This was rather complex prior to the introduction of LLMs as researchers had to depend of handcrafted rules, regular expressions, and traditional machine learning models for anomaly detection. In Experience, we utilize a similar approach by incorporating ROS2 log collection during runtime to gather evidence about the execution of capabilities, which is then analyzed to predict potential failures and improve the reliability of pre-execution plan assessment.
+At the capability layer, the original ROS capabilities package and Capabilities2 solve a different but necessary problem: how robot skills are described, loaded, related, and executed in a standard form \cite{woodall_ros_2014, pritchard_capabilities2_2025}. Capabilities2 is especially relevant because it provides a structured, ROS2-native description of behaviour interfaces and providers that can be queried at runtime. This makes it a stronger substrate for evidence-aware planning than ad hoc prompt-only skill descriptions. Experience builds directly on this layer, but Capabilities2 itself is not a plan-generation or plan-selection framework; it describes what the robot can do, not which candidate plan is most feasible.
 
-GraphRAG \cite{edge2025localglobalgraphrag} is used to implement the semantic search and retrieval functionality within a semantic graph, enabling efficient querying and reasoning over the structured knowledge about capabilities, tasks, and context entities. This is mainly focused for Large Document Retrieval tasks, where the system needs to efficiently locate relevant information from a vast collection of documents or knowledge entries. But this approach can be adapted to the robotic planning context, where the semantic graph represents capabilities, tasks, and context entities rather than documents, allowing the system to retrieve relevant knowledge efficiently for plan generation and assessment. EmbodiedRAG \cite{booker2024embodiedragdynamic3dscene} similarly adapts retrieval-augmented generation to dynamic 3D scene graphs for robot task planning, highlighting the potential for RAG-based methods in embodied Robotics contexts.
+The question of reliability has recently been revisited through uncertainty estimation. CURE explicitly separates epistemic and intrinsic uncertainty for LLM-based robot planning and further decomposes epistemic uncertainty into clarity and familiarity, producing uncertainty estimates that better track observed outcomes than simpler baselines \cite{yin2025reliablellmbasedrobotplanning}. This is closely aligned with our problem formulation, and it directly motivates our use of separate uncertainty components rather than one undifferentiated confidence term. However, CURE is concerned primarily with judging whether a generated plan is reliable enough to execute or escalate, whereas Experience addresses ranking among multiple structured candidate plans under time, energy, and fault-related costs as well as uncertainty.
 
-Experience is an evidence-aware ranking layer placed between generation and execution. This is motivated by a simple observation from the broader fault-tolerance and verification literature: acceptable plans are not defined only by semantic correctness, but also by timing, energy, uncertainty, and the system's ability to justify the choice it made.
+Runtime evidence extraction is also relevant. LogLLM shows that large language models can support log-based anomaly detection by preserving semantic information in system logs instead of relying only on handcrafted parsers or fixed templates \cite{guan2025logllmlogbasedanomalydetection}. Although this work is not specific to robotics, it inspires our work because Experience uses Supervisor-collected ROS2 logs and diagnostics as one evidence source for fault burden and explanation. Similarly, the Supervisor stack treats node logs, diagnostics, and capability events as signals that can be aggregated into capability-centric runtime records rather than left as isolated subsystem outputs.
+
+GraphRAG provides a graph-based retrieval and summarisation pattern that supports both local neighbor reasoning and larger community-level summaries \cite{edge2025localglobalgraphrag}. This is important because long-horizon planning systems cannot forward the entire robot state and telemetry history into every prompt. EmbodiedRAG adapts the broader retrieval-augmented paradigm to dynamic 3D scene graphs for embodied planning and demonstrates that selective retrieval can reduce token load while improving performance \cite{booker2024embodiedragdynamic3dscene}. Experience follows this direction, but applies it to capability knowledge, task context, prior plan patterns, and fault concepts rather than only to scene descriptions.
+
+Taken together, the literature establishes four relevant ideas: LLMs can propose long-horizon robot plans, structured intermediate representations are preferable to opaque code, runtime uncertainty and fault evidence can improve dependability, and selective retrieval is necessary for scalable prompting. The remaining gap is a system that joins these ideas into a pre-execution assessment layer that ranks candidate behaviour execution graphs using both semantic relevance and empirical runtime evidence. Experience is intended to address that gap.
 
 \section{Methodology}
+
+The Experience methodology treats pre-execution plan assessment as a read-write loop between candidate plans, a knowledge store, and runtime feedback. The planner proposes structured candidate plans, Experience ranks them against semantic and empirical evidence, Fabric executes the selected candidate, and Supervisor feeds the resulting observations back into the knowledge store for future decisions.
 
 \subsection{Problem Formulation}
 
@@ -81,13 +88,29 @@ where each candidate plan is a directed execution graph,
 G_{\pi}=(V_{\pi}, E_{\pi}).
 \end{equation}
 
-Since we propose the system on capabilities2 \cite{pritchard_capabilities2_2025} framework, each node corresponds to a capability instance or system runner, and each edge represents an execution relationship or triggering condition inherited from the underlying Fabric plan semantics. The research problem is not only to generate these graphs, but to rank them before execution using evidence that is conditioned on the task, context, and prior runtime history.
+Within the current Capabilities2-Fabric stack, each node corresponds to a capability instance or system runner and each edge corresponds to an execution relation or triggering event inherited from Fabric plan semantics. Sequential plans are therefore only a special case of a more general execution graph. The research problem is not only to generate such graphs, but to choose the best feasible graph before execution using evidence conditioned on the task, the robot, the environment, and prior runtime history.
+
+The selected plan is defined as
+
+\begin{equation}
+G_{\pi^*}=\arg\max_{G_{\pi}\in \mathcal{P}\cap \mathcal{F}} \operatorname{RAPFS}(G_{\pi}),
+\end{equation}
+
+where $\mathcal{F}$ is the feasibility set and $\operatorname{RAPFS}(G_{\pi})$ is the Risk-Aware Plan Feasibility Score used for ranking.
 
 \subsection{Dual Knowledge Representation}
 
-Experience uses two linked graphs as its knowledge store. The semantic graph in the form of a GraphRAG \cite{edge2025localglobalgraphrag} captures meaning: skill (capability) descriptions, task entities, context entities, reusable plan patterns, and fault concepts. It supports retrieval questions such as which capabilities are relevant to the task, which dependencies frequently co-occur, and which recovery structures are semantically similar to the current problem. The statistical graph contains capabilities as nodes and captures measurement: execution success and failure counts, duration, battery or energy usage, observed fault frequencies, and uncertainty-relevant metadata.
+Experience uses two linked graphs as its knowledge store. The semantic graph, implemented in the current stack using a GraphRAG-style core \cite{edge2025localglobalgraphrag}, captures meaning: capability descriptions, task entities, context entities, plan patterns, and fault concepts. It answers retrieval questions such as which capabilities are relevant to a task, which dependencies frequently co-occur, which recovery patterns resemble the present request, and which contexts appear unfamiliar.
 
-The graphs share stable capability and context identifiers but remain logically separate. This separation prevents a common modeling mistake in generative planning: treating semantic relevance as if it were probability of success. A capability can be a strong semantic match for the user's request and still be a poor operational choice because its empirical evidence is sparse or negative.
+The statistical graph captures measurement rather than meaning. It stores aggregated execution evidence keyed by stable capability and context identifiers, including success and failure counts, runtime intervals, battery or energy deltas, labelled fault records, and estimator provenance needed to produce plan features. The two graphs share identities, but remain logically separate. This separation prevents a common modeling error in generative planning: treating semantic similarity as if it were execution reliability.
+
+In practice, the knowledge store is updated from four input classes: runtime observations from Supervisor, capability metadata from Capabilities2, prior plan graphs and outcomes from Fabric-side planning history, and external task or operator context. Semantic writes preserve what a capability is and how it relates to the task. Statistical writes preserve how that capability has behaved at runtime.
+
+\subsection{Evidence Ingestion and Context Conditioning}
+
+Before a candidate plan can be scored, each candidate node is resolved to stable capability and context identifiers. Experience then retrieves the most specific statistical evidence available for that node, preferring exact capability-context matches and falling back to broader aggregates only when specific evidence is sparse or absent. This read path matters because the same behaviour may perform differently across tasks, robot states, or environmental contexts.
+
+The write path follows the same principle. Supervisor runtime records are converted into capability-centric evidence that can later be joined to planning requests. Capability metadata contributes semantic descriptions, relations, providers, and dependency information. Prior plans contribute graph structure and plan-pattern information. External task descriptions provide the semantic query context that drives retrieval. These sources are not collapsed into one undifferentiated store; instead, they remain distinguishable so explanations can later identify which score components came from which evidence.
 
 \subsection{From Evidence to Node Features}
 
@@ -97,50 +120,111 @@ For each capability instance $i$ in a candidate graph, Experience estimates a fe
 x_i = [p_i, t_i, e_i, f_i, \mathbf{r}_i, u_i],
 \end{equation}
 
-where $p_i$ is estimated success probability, $t_i$ is expected execution time, $e_i$ is expected energy cost, $f_i$ is expected fault burden, $\mathbf{r}_i$ is a resource-demand vector, and $u_i$ is epistemic uncertainty. Epistemic uncertainty combines estimation uncertainty, task ambiguity, unfamiliarity, and missing-evidence penalties which are inspired by the CURE framework \cite{yin2025reliablellmbasedrobotplanning}.
+where $p_i$ is estimated success probability, $t_i$ is expected execution time, $e_i$ is expected energy cost, $f_i$ is expected fault burden, $\mathbf{r}_i$ is a resource-demand vector, and $u_i$ is epistemic uncertainty.
 
-The data for this dual representation is driven by four input classes: runtime observations, capability metadata, prior plan history, and external task context. 
+The uncertainty term is intentionally structured rather than monolithic. Following the motivation of CURE \cite{yin2025reliablellmbasedrobotplanning}, we distinguish sparse-statistics uncertainty, task ambiguity, unfamiliarity, and missing-evidence penalties. This separates the concepts of low success probability and high uncertainty. A plan may have strong evidence that it usually fails, which should be treated as a reliability problem, or it may have weak evidence either way, which should be treated as an uncertainty problem.
 
-The evaluation resolves candidate plan nodes to stable IDs, retrieves semantic neighbors and statistical data, selects the most specific reliable evidence available, and raises uncertainty when broader fallbacks or missing telemetry are required.
+The current implementation can estimate $p_i$, $t_i$, $e_i$, and fault-related parts of $f_i$ from capability-centric runtime records. It can also raise uncertainty when evidence is sparse or fallback estimates are used. Quantitative multidimensional resource telemetry is not yet fully available, so $\mathbf{r}_i$ remains part of the model but is not yet supported by complete measured CPU, memory, network, storage, or actuator demand signals.
 
-In the current formulation, quantitative resource telemetry is not yet fully available, so the resource vector $\mathbf{r}_i$ remains a declared part of the model while its hard constraint can remain inactive during evaluation.
+\subsection{Plan-Level Cost Factors}
+
+RAPFS does not score node features independently. Instead, it lifts node-level estimates into plan-level cost factors using the execution semantics of the candidate graph. Let $\omega$ denote one possible execution scenario, $V_{\omega}\subseteq V_{\pi}$ the nodes executed in that scenario, $s_i^{\omega}$ and $d_i^{\omega}$ the scheduled start and finish times of node $i$, and $A_{\omega}(t)$ the set of nodes active at time $t$. The plan-level time factor is then defined as the expected makespan,
+
+\begin{equation}
+T(G_{\pi})=
+\mathbb{E}_{\omega}\left[
+\max_{i\in V_{\omega}} d_i^{\omega}
+-
+\min_{i\in V_{\omega}} s_i^{\omega}
+\right],
+\end{equation}
+
+which captures the total elapsed execution time rather than a simple sum of step durations. This distinction matters for parallel branches, where wall-clock time depends on overlap between active nodes.
+
+The energy and fault factors are defined as expected cumulative costs over the executed scenario path,
+
+\begin{equation}
+E(G_{\pi})=\mathbb{E}_{\omega}\left[\sum_{i\in V_{\omega}} e_i\right],
+\qquad
+F(G_{\pi})=\mathbb{E}_{\omega}\left[\sum_{i\in V_{\omega}} f_i\right].
+\end{equation}
+
+Here, $E(G_{\pi})$ penalizes plans that are likely to consume more battery or energy, while $F(G_{\pi})$ penalizes plans whose capability chains are associated with higher expected warning, error, or failure burden.
+
+For multidimensional resource demand, Experience keeps the node-level resource estimate as a vector rather than forcing it into one scalar too early. The peak concurrent demand of one execution scenario is
+
+\begin{equation}
+\mathbf{R}_{\mathrm{peak}}^{\omega}(G_{\pi})=
+\max_{t}^{\mathrm{componentwise}}
+\sum_{i\in A_{\omega}(t)} \mathbf{r}_i,
+\end{equation}
+
+which captures the highest simultaneous resource load induced by the plan. For preference ranking, this vector can be projected into a scalar operating-cost term,
+
+\begin{equation}
+C_r(G_{\pi})=
+\mathbb{E}_{\omega}\left[
+\int \mathbf{c}_r^{\top}
+\left(\sum_{i\in A_{\omega}(t)} \mathbf{r}_i\right) dt
+\right],
+\end{equation}
+
+where $\mathbf{c}_r$ is a nonnegative weighting vector over the measured resource dimensions. In the current implementation this term remains structurally defined but only partially active, because complete quantitative resource telemetry is not yet available.
+
+To make heterogeneous cost factors comparable inside one score, each plan-level quantity is normalized by a fixed transformation,
+
+\begin{equation}
+\hat{K}(G_{\pi})=g_K\left(K(G_{\pi})\right),
+\qquad
+K\in\{T,E,F,C_r,U\},
+\end{equation}
+
+where $g_K(\cdot)$ maps the raw factor into a bounded comparison scale. This keeps the score interpretable and prevents one raw metric from dominating only because it uses a larger numeric range.
 
 \subsection{Risk-Aware Plan Feasibility Score}
 
 The Risk-Aware Plan Feasibility Score ranks candidate plans using
 
 \begin{equation}
-\operatorname{RAPFS}(G_{\pi}) =
- w_s S(G_{\pi})
- - w_t \hat{T}(G_{\pi})
- - w_e \hat{E}(G_{\pi})
- - w_f \hat{F}(G_{\pi})
- - w_r \hat{C}_r(G_{\pi})
- - w_u \hat{U}(G_{\pi}),
+\begin{aligned}
+\operatorname{RAPFS}(G_{\pi}) ={}& w_s S(G_{\pi}) - w_t \hat{T}(G_{\pi}) - w_e \hat{E}(G_{\pi}) \\
+& - w_f \hat{F}(G_{\pi}) - w_r \hat{C}_r(G_{\pi}) - w_u \hat{U}(G_{\pi}).
+\end{aligned}
 \end{equation}
 
-where $S(G_{\pi})$ is terminal success probability, $\hat{T}(G_{\pi})$, $\hat{E}(G_{\pi})$, $\hat{F}(G_{\pi})$, and $\hat{C}_r(G_{\pi})$ are normalized plan-level costs, and the nonnegative weights encode the deployment trade-off. 
+where $S(G_{\pi})$ is estimated terminal success probability, $\hat{T}(G_{\pi})$, $\hat{E}(G_{\pi})$, $\hat{F}(G_{\pi})$, and $\hat{C}_r(G_{\pi})$ are normalized plan-level cost terms, and $\hat{U}(G_{\pi})$ is normalized plan-level uncertainty. The weights are nonnegative and encode the deployment trade-off between success, efficiency, fault burden, resource cost, and uncertainty.
 
-Experience treats failure probability and uncertainty as two distinct concepts. Low success probability indicates that a plan is estimated to fail. High uncertainty indicates that the estimate itself is weak because of sparse evidence, ambiguous task grounding, unfamiliar context, or missing telemetry. Those cases should be handled differently by the planner.
+Plan-level aggregation follows graph semantics rather than flattening the plan into an unordered list. Sequential chains, parallel joins, and recovery branches contribute differently to success and cost. In particular, Experience treats `parallel\_any', `parallel\_all', and recovery structures as path-dependent control structures rather than as simple sums. The aim is to preserve the meaning of the original Fabric candidate plan when deriving plan-level scores.
 
 \subsection{Feasibility Constraints and Feedback}
 
-The ranking stage is paired with hard feasibility checks over time, energy, terminal success, and eventually peak concurrent resources and rejects plans that violate   declared limits before execution. During execution, new runtime evidence primarily updates the component-wise statiscal data which will be then used for future plan ranking.
+Ranking is paired with hard feasibility checks over time, energy, terminal success, and eventually peak concurrent resource demand. The feasible set is
+
+\begin{multline}
+\mathcal{F}=\{G_{\pi}: T(G_{\pi})\leq T_{\mathrm{avail}},\; E(G_{\pi})\leq E_{\mathrm{avail}},\; \\
+S(G_{\pi})\geq \tau,\; \mathbf{Q}_{q}\left(\mathbf{R}_{\mathrm{peak}}^{\omega}(G_{\pi})\right) \preceq \mathbf{R}_{\max}\}.
+\end{multline}
+
+where $T_{\mathrm{avail}}$ and $E_{\mathrm{avail}}$ are the available time and energy budgets, $\tau$ is the minimum acceptable success threshold, and $\mathbf{Q}_{q}(\cdot)$ denotes a conservative upper quantile of the peak concurrent resource demand. Plans that violate these declared limits are rejected before selection. In the present implementation, the strongest active feasibility terms are success, runtime, energy, fault burden, and uncertainty thresholds, while quantitative resource feasibility remains limited by missing telemetry.
+
+After execution, new runtime evidence is fed back into the statistical graph and attached to the selected plan record. This supports two forms of improvement over time. First, component estimates such as runtime, energy, fault burden, and success probability can be updated as new data arrives. Second, whole-plan feedback can later be used to audit or recalibrate the ranking behaviour of RAPFS. In this way, Experience is designed not only to score plans, but to improve the quality and traceability of future scoring decisions.
 
 \section{Implementation and Results}
 
-We propose Experience stack as a ROS2 plugin-based framework and an extension for \textit{Fabric} behaviour planning framework \cite{ratnayake2026generativepartiallyspecifiedfinite} which is built on capabilties2 framework. We also propose Supervisor stack as a support mechanism for collecting runtime evidence from the ros2 ecosystem, capabiltiy framework and Fabric framework. It collects execution traces, resource usage, outcome statistics and parses ros2 logs and diagnostics data to feed back into the Experience ranking system.
+The current implementation of Experience is organised as a plugin-based ROS2 stack that extends the existing Fabric and Capabilities2 workflow rather than replacing it. The central node is the Experience server, which loads dedicated plugins for capability metadata ingestion, fabric interfacing, supervisor telemetry adaptation, knowledge storage and retrieval, feature estimation, planning, validation, and scoring. At startup, Experience queries Capabilities2 for runnable specifications and normalised behaviour metadata, then builds a GraphRAG-based semantic core together with structured statistical storage for runtime evidence.
 
-We also modify the Fabric and capabilities2 frameworks to integrate the Experience system, and to allow Supervisor stack to collect runtime evidence without interfering, ensuring that original functionality is preserved while enabling the collection and utilization of runtime evidence for plan ranking.
+Supervisor provides the runtime evidence layer. Its server loads monitor plugins for sources such as capability events, Fabric status, ROS2 logs, and ROS2 diagnostics, then aggregates those signals into capability-centric records. The resulting `SystemStatus' message includes lifecycle information, inferred run-evidence counters, battery usage summaries, related node timelines, and correlated suspicious or faulty log records for each capability. Experience subscribes to this `system\_status' topic and converts the message into its internal runtime structure before updating the semantic and statistical stores. This means that, in the current stack, Experience does not rely on raw telemetry directly; it relies on Supervisor's capability-level aggregation as the evidence boundary. This allows us to extend the Experience framework to be compatible with other generative pipelines in the future.
+
+On the planning side, Experience sits between Fabric and the underlying prompt-driven generator. The planner plugin produces or refines candidate Fabric XML plans, the validator checks that referenced capabilities are known and executable, and the RAPFS scorer resolves each candidate node to stable capability and context identities before estimating node features and aggregating a plan score. The current server also exposes score-oriented interfaces that are useful for analysis: a score-only service can evaluate a supplied Fabric XML plan without dispatching execution, a score-explanation service can return the selected evidence and feature components for the chosen plan, and a feedback interface can record external plan-level judgements for later analysis.
 
 The figure \ref{fig:experience_architecture} illustrates the overall architecture of the Experience and Supervisor stacks, showing how runtime evidence is collected and fed back into the plan ranking system.
 
-\begin{figure}
+\begin{figure*}[t]
     \centering
-    \includegraphics[width=0.8\linewidth]{experience_architecture.png}
+    \includegraphics[width=0.9\textwidth]{experience_architecture.png}
     \caption{Architecture of the Experience and Supervisor stacks.}
     \label{fig:experience_architecture}
-\end{figure}
+\end{figure*}
 
 We run 5 generative tasks related to manipulation in a Physical Techman TM12s robot as shown in the figure \ref{fig:experiment_setup}. We utilize a custom two finger gripper for the manipulation tasks and a Realsense camera for perception. Anygrasp \cite{fang2023anygrasp} framework is used for grasp pose detection and Ultralytics Yolo26 \cite{jocher2026ultralyticsyolo26unifiedrealtime} is used for object detection. All of these components are integrated into the ROS2 ecosystem to facilitate seamless operation and data collection for the Experience and Supervisor stacks. All the ROS2 nodes run on a local workstation with an Intel Xeon W3245 processor with 192GB RAM and RTX 3090 with 24GB VRAM.
 
@@ -161,21 +245,23 @@ The vision and manipulation tasks used for evaluation are as follows:
     \item Moving one of the oranges to the drop location.
 \end{enumerate}
 
-These tasks are evaluated under 3 conditions and each task is iterated 10 times. Following are the evaluation conditions:
+These tasks are evaluated under 3 conditions and each task is iterated 10 times. The evaluation conditions are:
 
 \begin{enumerate}
     \item Fabric stack for direct plan generation.
-    \item Fabric and Experience stacks with Experience containing only semantic information.
-    \item Fabric and Experience stacks with Experience containing both semantic information and empirical run evidence.
+    \item Fabric and Experience stacks with Experience initialised from capability semantics but without prior empirical execution evidence.
+    \item Fabric and Experience stacks with Experience containing both semantic information and prior empirical run evidence.
 \end{enumerate}
 
-In the second evaluation condition, the Experience stack contains only semantic information, and expects the experience stack to gain empirical run evidence over time as tasks are executed. In the third evaluation condition, the Experience stack already contains empirical run evidence collected from non-generative predefined plan executions. It is also expected to collect run evidence during the evaluation, allowing the system to leverage both prior experience and empirical run evidence for more informed plan selection.
+In the second evaluation condition, Experience begins with capability semantics and acquires empirical evidence only as tasks are executed during the experiment. 
+
+In the third condition, Experience is seeded with empirical evidence collected from prior non-generative executions and continues to update that evidence online during evaluation. This distinction allows us to separate two questions: whether semantic pre-structuring alone improves plan assessment, and whether additional empirical evidence further improves the quality of candidate selection.
 
 \section{Conclusion}
 
 Experience is intended to make generative robot planning more selective and more defensible before execution begins. It emphasizes that plan candidates should not be ranked only by how well they match the task in language, but also by how well prior evidence suggests they will execute under the current conditions. The dual-graph representation and RAPFS formulation provide that bridge between semantic relevance and empirical feasibility.
 
-This initial paper draft captures the contribution's conceptual center from the canonical Contribution 2 markdown source. What remains unfinished is primarily empirical packaging, not the architectural argument. The next stage is to consolidate the evaluation evidence into a paper-specific results section that tests whether Experience improves plan ranking, calibration, and failure avoidance relative to generation-only baselines.
+The current ROS2 implementation already connects capability metadata, candidate Fabric plans, supervisor telemetry, graph-based retrieval, and queryable plan scoring into one evidence-aware planning layer. The main remaining work is empirical rather than architectural: calibrating the score components more thoroughly, activating richer resource evidence, and validating the overall approach through extensive real-world experimentation.
 
 \bibliographystyle{ieeetr}
 \bibliography{references}

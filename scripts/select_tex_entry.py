@@ -49,7 +49,8 @@ def prompt_select(options: list[Path]) -> Path:
         print(f"  {index}. {path.name}", file=sys.stderr)
 
     while True:
-        choice = input("Enter selection index: ").strip()
+        print("Enter selection index: ", end="", file=sys.stderr, flush=True)
+        choice = input().strip()
         if not choice.isdigit():
             print("Please enter a numeric index.", file=sys.stderr)
             continue
@@ -66,7 +67,8 @@ def confirm_single(option: Path) -> Path:
         )
 
     while True:
-        answer = input(f"Build {option.name}? [y/n]: ").strip().lower()
+        print(f"Build {option.name}? [y/n]: ", end="", file=sys.stderr, flush=True)
+        answer = input().strip().lower()
         if answer in {"y", "yes"}:
             return option
         if answer in {"n", "no"}:
