@@ -56,24 +56,6 @@ numpages = {8},
 location = {Xi'an, China}
 }
 
-  
-
-
-@inproceedings{wang_navistar_2023,
-    title = {{NaviSTAR}: {Socially} {Aware} {Robot} {Navigation} with {Hybrid} {Spatio}-{Temporal} {Graph} {Transformer} and {Preference} {Learning}},
-    shorttitle = {{NaviSTAR}},
-    url = {https://ieeexplore.ieee.org/document/10341395},
-    doi = {10.1109/IROS55552.2023.10341395},
-    abstract = {Developing robotic technologies for use in human society requires ensuring the safety of robots' navigation behaviors while adhering to pedestrians' expectations and social norms. However, understanding complex human-robot interactions (HRI) to infer potential cooperation and response among robots and pedestrians for cooperative collision avoid-ance is challenging. To address these challenges, we propose a novel socially-aware navigation benchmark called NaviS Tar, which utilizes a hybrid Spatio- Temporal grAph tRansformer to understand interactions in human-rich environments fusing crowd multi-modal dynamic features. We leverage an off-policy reinforcement learning algorithm with preference learning to train a policy and a reward function network with supervi-sor guidance. Additionally, we design a social score function to evaluate the overall performance of social navigation. To compare, we train and test our algorithm with other state-of-the-art methods in both simulator and real-world scenarios independently. Our results show that NaviSTAR outperforms previous methods with outstanding performance11The source code and experiment videos of this work are available at: https://sites.google.com/view/san-navistar},
-    urldate = {2024-04-16},
-    booktitle = {2023 {IEEE}/{RSJ} {International} {Conference} on {Intelligent} {Robots} and {Systems} ({IROS})},
-    author = {Wang, Weizheng and Wang, Ruiqi and Mao, Le and Min, Byung-Cheol},
-    month = oct,
-    year = {2023},
-    note = {ISSN: 2153-0866},
-    keywords = {Heuristic algorithms, Human-robot interaction, Navigation, Pedestrians, Source coding, Training, Transformers},
-    pages = {11348--11355},
-}
 @article{ahn_as_nodate,
     title = {Do {As} {I} {Can}, {Not} {As} {I} {Say}: {Grounding} {Language} in {Robotic} {Affordances}},
     abstract = {Large language models can encode a wealth of semantic knowledge about the world. Such knowledge could be extremely useful to robots aiming to act upon high-level, temporally extended instructions expressed in natural language. However, a signiﬁcant weakness of language models is that they lack real-world experience, which makes it difﬁcult to leverage them for decision making within a given embodiment. For example, asking a language model to describe how to clean a spill might result in a reasonable narrative, but it may not be applicable to a particular agent, such as a robot, that needs to perform this task in a particular environment. We propose to provide real-world grounding by means of pretrained skills, which are used to constrain the model to propose natural language actions that are both feasible and contextually appropriate. The robot can act as the language model’s “hands and eyes,” while the language model supplies high-level semantic knowledge about the task. We show how low-level skills can be combined with large language models so that the language model provides high-level knowledge about the procedures for performing complex and temporally extended instructions, while value functions associated with these skills provide the grounding necessary to connect this knowledge to a particular physical environment. We evaluate our method on a number of real-world robotic tasks, where we show the need for real-world grounding and that this approach is capable of completing long-horizon, abstract, natural language instructions on a mobile manipulator. The project’s website, the video, and open sourced code in a tabletop domain can be found at say-can.github.io.},
@@ -453,4 +435,77 @@ abstract = {Behavior Trees (BTs) were invented as a tool to enable modular AI in
     year = {2023},
     note = {arXiv:2209.07753 [cs]},
     keywords = {Computer Science - Robotics},
+}
+
+@misc{ratnayake2026generativepartiallyspecifiedfinite,
+      title={A Generative Partially Specified Finite State Machine Approach to Complex Behaviour Planning}, 
+      author={Kalana Ratnayake and Michael Pritchard and David Hinwood and Maleen Jayasuriya and Damith Herath},
+      year={2026},
+      eprint={2607.15674},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2607.15674},
+      abstract = {Autonomous robots operating in dynamic environments require behaviour planning systems that combine reactivity, interpretability, and adaptability. While Large Language Models have been successfully integrated with Behaviour Trees for dynamic replanning, Finite State Machines, despite their widespread adoption and computational efficiency, remain unexplored for generative approaches. We propose a Generative Partially Specified Finite State Machine (GPSFSM) neurosymbolic architecture that utilises the symbolic and semantic structure of FSMs, including states and event-triggered transitions, to implement Behaviour Planning. This paper introduces the first GPSFSM framework for robotics, featuring Fabric, an FSM engine that parses, validates, and executes behaviour plans that contain Sequential, Recovery, Parallel-Any, and Parallel-All control structures. We extend the Capabilities2 package in ROS2 with an asynchronous event system for behaviour chaining and runtime parameter injection for configurable execution, addressing the ad-hoc function representations that limit current generative systems. PromptTools provides a unified ROS 2 interface to local and cloud LLMs, with prompt buffering, enabling dynamic asynchronous composition of task and context information. Together, these components enable standardised semantic capability descriptions for robot-agnostic development. Experimental evaluation on navigation tasks demonstrates that our GPSFSM approach achieves consistently higher plan-generation success rates than the state-of-the-art BTGenBot system, particularly excelling in zero-shot scenarios where BTs typically struggle, while maintaining comparable or lower planning latency to frontier LLMs. We also demonstrate that our system can generate complex behaviours. We release an open-source ROS2 stack that makes generative FSM planning practical and reproducible for robotic systems. },
+}
+
+@misc{yin2025reliablellmbasedrobotplanning,
+      title={Towards Reliable LLM-based Robot Planning via Combined Uncertainty Estimation}, 
+      author={Shiyuan Yin and Chenjia Bai and Zihao Zhang and Junwei Jin and Xinxin Zhang and Chi Zhang and Xuelong Li},
+      year={2025},
+      eprint={2510.08044},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2510.08044}, 
+      abstract={Large language models (LLMs) demonstrate advanced reasoning abilities, enabling robots to understand natural language instructions and generate high-level plans with appropriate grounding. However, LLM hallucinations present a significant challenge, often leading to overconfident yet potentially misaligned or unsafe plans. While researchers have explored uncertainty estimation to improve the reliability of LLM-based planning, existing studies have not sufficiently differentiated between epistemic and intrinsic uncertainty, limiting the effectiveness of uncertainty estimation. In this paper, we present Combined Uncertainty estimation for Reliable Embodied planning (CURE), which decomposes the uncertainty into epistemic and intrinsic uncertainty, each estimated separately. Furthermore, epistemic uncertainty is subdivided into task clarity and task familiarity for more accurate evaluation. The overall uncertainty assessments are obtained using random network distillation and multi-layer perceptron regression heads driven by LLM features. We validated our approach in two distinct experimental settings: kitchen manipulation and tabletop rearrangement experiments. The results show that, compared to existing methods, our approach yields uncertainty estimates that are more closely aligned with the actual execution outcomes.},
+}
+
+@misc{guan2025logllmlogbasedanomalydetection,
+      title={LogLLM: Log-based Anomaly Detection Using Large Language Models}, 
+      author={Wei Guan and Jian Cao and Shiyou Qian and Jianqi Gao and Chun Ouyang},
+      year={2025},
+      eprint={2411.08561},
+      archivePrefix={arXiv},
+      primaryClass={cs.SE},
+      url={https://arxiv.org/abs/2411.08561}, 
+      abstract={Software systems often record important runtime information in logs to help with troubleshooting. Log-based anomaly detection has become a key research area that aims to identify system issues through log data, ultimately enhancing the reliability of software systems. Traditional deep learning methods often struggle to capture the semantic information embedded in log data, which is typically organized in natural language. In this paper, we propose LogLLM, a log-based anomaly detection framework that leverages large language models (LLMs). LogLLM employs BERT for extracting semantic vectors from log messages, while utilizing Llama, a transformer decoder-based model, for classifying log sequences. Additionally, we introduce a projector to align the vector representation spaces of BERT and Llama, ensuring a cohesive understanding of log semantics. Unlike conventional methods that require log parsers to extract templates, LogLLM preprocesses log messages with regular expressions, streamlining the entire process. Our framework is trained through a novel three-stage procedure designed to enhance performance and adaptability. Experimental results across four public datasets demonstrate that LogLLM outperforms state-of-the-art methods. Even when handling unstable logs, it effectively captures the semantic meaning of log messages and detects anomalies accurately.},
+}
+
+@misc{edge2025localglobalgraphrag,
+      title={From Local to Global: A Graph RAG Approach to Query-Focused Summarization}, 
+      author={Darren Edge and Ha Trinh and Newman Cheng and Joshua Bradley and Alex Chao and Apurva Mody and Steven Truitt and Dasha Metropolitansky and Robert Osazuwa Ness and Jonathan Larson},
+      year={2025},
+      eprint={2404.16130},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2404.16130}, 
+      abstract={The use of retrieval-augmented generation (RAG) to retrieve relevant information from an external knowledge source enables large language models (LLMs) to answer questions over private and/or previously unseen document collections. However, RAG fails on global questions directed at an entire text corpus, such as "What are the main themes in the dataset?", since this is inherently a query-focused summarization (QFS) task, rather than an explicit retrieval task. Prior QFS methods, meanwhile, do not scale to the quantities of text indexed by typical RAG systems. To combine the strengths of these contrasting methods, we propose GraphRAG, a graph-based approach to question answering over private text corpora that scales with both the generality of user questions and the quantity of source text. Our approach uses an LLM to build a graph index in two stages: first, to derive an entity knowledge graph from the source documents, then to pregenerate community summaries for all groups of closely related entities. Given a question, each community summary is used to generate a partial response, before all partial responses are again summarized in a final response to the user. For a class of global sensemaking questions over datasets in the 1 million token range, we show that GraphRAG leads to substantial improvements over a conventional RAG baseline for both the comprehensiveness and diversity of generated answers. },
+}
+
+@misc{booker2024embodiedragdynamic3dscene,
+      title={EmbodiedRAG: Dynamic 3D Scene Graph Retrieval for Efficient and Scalable Robot Task Planning}, 
+      author={Meghan Booker and Grayson Byrd and Bethany Kemp and Aurora Schmidt and Corban Rivera},
+      year={2024},
+      eprint={2410.23968},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2410.23968}, 
+      abstract={Recent advances in Large Language Models (LLMs) have helped facilitate exciting progress for robotic planning in real, open-world environments. 3D scene graphs (3DSGs) offer a promising environment representation for grounding such LLM-based planners as they are compact and semantically rich. However, as the robot's environment scales (e.g., number of entities tracked) and the complexity of scene graph information increases (e.g., maintaining more attributes), providing the 3DSG as-is to an LLM-based planner quickly becomes infeasible due to input token count limits and attentional biases present in LLMs. Inspired by the successes of Retrieval-Augmented Generation (RAG) methods that retrieve query-relevant document chunks for LLM question and answering, we adapt the paradigm for our embodied domain. Specifically, we propose a 3D scene subgraph retrieval framework, called EmbodiedRAG, that we augment an LLM-based planner with for executing natural language robotic tasks. Notably, our retrieved subgraphs adapt to changes in the environment as well as changes in task-relevancy as the robot executes its plan. We demonstrate EmbodiedRAG's ability to significantly reduce input token counts (by an order of magnitude) and planning time (up to 70% reduction in average time per planning step) while improving success rates on AI2Thor simulated household tasks with a single-arm, mobile manipulator. Additionally, we implement EmbodiedRAG on a quadruped with a manipulator to highlight the performance benefits for robot deployment at the edge in real environments. },
+}
+
+@article{fang2023anygrasp,
+  title={AnyGrasp: Robust and Efficient Grasp Perception in Spatial and Temporal Domains},
+  author = {Fang, Hao-Shu and Wang, Chenxi and Fang, Hongjie and Gou, Minghao and Liu, Jirong and Yan, Hengxu and Liu, Wenhai and Xie, Yichen and Lu, Cewu},
+  journal={IEEE Transactions on Robotics (T-RO)},
+  year={2023}
+}
+
+@misc{jocher2026ultralyticsyolo26unifiedrealtime,
+  title = {Ultralytics YOLO26: Unified Real-Time End-to-End Vision Models},
+  author = {Glenn Jocher and Jing Qiu and Mengyu Liu and Shuai Lyu and Fatih Cagatay Akyon and Muhammet Esat Kalfaoglu},
+  year = {2026},
+  eprint = {2606.03748},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.CV},
+  doi = {10.48550/arXiv.2606.03748},
+  url = {https://arxiv.org/abs/2606.03748},
 }
