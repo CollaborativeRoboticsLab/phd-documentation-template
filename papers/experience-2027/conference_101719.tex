@@ -18,7 +18,7 @@
 
 \begin{document}
 
-\title{Experience: Evidence-Aware Pre-Execution Plan Assessment for Generative Robot Planning}
+\title{Experience: Evidence-Aware Pre-Execution Plan Assessment for Generative Robotic Behaviour Planning}
 
 \author{Kalana Ratnayake$^{1}$, Michael Pritchard$^{2}$, Maleen Jayasuriya$^{3}$, Damith Herath$^{4}$%
 \thanks{$^{1}$Kalana Ratnayake is with Collaborative Robotics Laboratory, Faculty of Science and Technology, University of Canberra, ACT, Australia {\tt\small Kalana.Ratnayakemudiyanselage@canberra.edu.au}}%
@@ -30,7 +30,7 @@
 \maketitle
 
 \begin{abstract}
-Generative robot planning systems can produce plausible behaviour plans from natural-language tasks, but they still tend to treat plan candidates as equally executable until failure occurs at runtime. This is a weak point for deployed robots, because a plan may be semantically relevant while still being slow, fragile, poorly grounded in available capability evidence, or mismatched to the robot's current state. We introduce \textit{Experience}, a planning layer that sits between capability discovery and execution and performs pre-execution plan assessment for Fabric-style execution graphs. Experience combines a semantic graph for capability and task meaning with a statistical graph for empirical execution evidence, then ranks candidate plans with a Risk-Aware Plan Feasibility Score (RAPFS) that balances predicted success, time, energy, fault burden, resource considerations, and epistemic uncertainty. This paper initializes the manuscript around the contribution's canonical thesis chapter: it defines the representation, the data-ingestion and retrieval paths, and the score formulation that makes the ranking process auditable. The current draft also records the present experimental state honestly: the conceptual and methodological core is specified, while the evaluation evidence is still being consolidated into paper-ready form.
+Generative robotic behaviour planning systems can produce plausible behaviour plans from natural-language tasks, but they still tend to treat plan candidates as equally executable until failure occurs at runtime. This is a weak point for deployed robots, because a plan may be semantically relevant while still being slow, fragile, poorly grounded in available capability evidence, or mismatched to the robot's current state. We introduce \textit{Experience}, a planning layer that sits between capability discovery and execution and performs pre-execution plan assessment for Fabric-style execution graphs. Experience combines a semantic graph for capability and task meaning with a statistical graph for empirical execution evidence, then ranks candidate plans with a Risk-Aware Plan Feasibility Score (RAPFS) that balances predicted success, time, energy, fault burden, resource considerations, and epistemic uncertainty. This paper initializes the manuscript around the contribution's canonical thesis chapter: it defines the representation, the data-ingestion and retrieval paths, and the score formulation that makes the ranking process auditable. The current draft also records the present experimental state honestly: the conceptual and methodological core is specified, while the evaluation evidence is still being consolidated into paper-ready form.
 \end{abstract}
 
 \begin{keywords}
