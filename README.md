@@ -123,20 +123,83 @@ papers/
      └── bibliography.bib
 ```
     
-- `paper_experiments` folder is intended for storing git repos linked with each paper's experimental results and related files. Since these are git repositories, each repo is maintained separately and linked to the paper it corresponds to. Within this workspace, these repos are treated as submodules.
+- `paper-experiments` folder is intended for storing experiment assets, notes, and repository-linked material associated with each paper. These directories can be used to keep experiment-specific content near the manuscript without requiring submodule management in this workspace.
 
 ```text
-paper_experiments/
+paper-experiments/
 ├── paper_1/
 ├── paper_2/
 └── paper_3/
 ```
 
-use git submodules to link the experimental repositories with the corresponding papers.
+## Common make commands
+
+This repository includes a `Makefile` for the common thesis, paper, and citation workflows.
+
+### Thesis
 
 ```bash
-cd paper_experiments
-git submodule add https://github.com/CollaborativeRoboticsLab/Academic-project-page-template.git
+# Compile the thesis
+make build-thesis
+
+# Count the words in the thesis
+make wordcount
+
+# Remove duplicate entries in the bibliography
+make dedupe
+
+# Check for consistency and correctness in the thesis files
+make verify
+
+# Identify unused references in the bibliography
+make unused
+
+# Remove auxiliary files generated during compilation
+make clean
+
+# Resolve citation issues in the thesis
+make resolve-citations
+
+# Update the bibliography with new citations
+make feed-citations thesis
+
+# Synchronize citations with the bibliography database
+make sync-citations
+```
+
+### Papers
+
+Replace `<paper-dir>` with a directory under `papers/`, for example `experience-2027`.
+
+```bash
+# Compile the specified paper
+make build-paper <paper-dir>
+
+# Compile a specific entry file within the paper directory
+make build-paper <paper-dir> <entry.tex>
+
+# Remove auxiliary files generated during compilation for the paper
+make clean-paper <paper-dir>
+
+# Remove duplicate entries in the paper's bibliography
+make dedupe-paper <paper-dir>
+
+# Check citations against the paper bibliography and unresolved list
+make verify-paper <paper-dir>
+
+# Identify unused references in the paper's bibliography
+make unused-paper <paper-dir>
+
+# Update the paper's bibliography with new citations
+make feed-citations paper <paper-dir>
+```
+
+Examples:
+
+```bash
+make build-paper experience-2027
+make build-paper gpsfsm-2026 conference_101719.tex
+make verify-paper capabilities2-2025
 ```
 
 

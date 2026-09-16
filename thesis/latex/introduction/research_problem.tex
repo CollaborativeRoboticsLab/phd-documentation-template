@@ -1,9 +1,7 @@
 \section{Research Problem}
 \label{sec::ResearchProblem}
 
-Robotic systems have gradually evolved over several decades to achieve the versatile control and planning systems available today. From Reactive systems and Deliberate systems to their combined version of hybrid systems and, finally, more abstracted behaviour-based systems, evolution has layered each new system's architecture on top of the previous generation while making the latest generation comparatively abstract. Deviating slightly from the evolution, learning-based systems encompass two categories: \textit {Decoupled learning-based systems}, which build upon previous generations, and \textit{Coupled learning-based systems}, which implement the entire planning and control pipeline independently and are entirely self-contained, without reliance on prior generations.
-
-Generally, robots can be operated by all these system types, but in current robots, the highest level system can either be behaviour-based or learning-based. Typically, for a robot to execute a task, an execution plan is created first, and then various subsystems are triggered per the execution plan. These subsystems, for the most part, employ a hybrid architecture, which combines reactive and deliberative systems. The Nav2 stack \cite{macenski2020marathon2} of the ROS2 \cite{macenski2022ros2} ecosystem, which is one popular navigational system, implements a behaviour-based system at the highest level, as shown in Figure \ref{fig::nv2_strucutre}
+The research problem addressed in this thesis revolves around the limitations of current robotic systems in dynamic and human-populated environments. While traditional behaviour-based systems provide a structured approach to robot control, they often lack the flexibility to adapt to unpredictable human behaviors. On the other hand, learning-based systems offer adaptability but are heavily dependent on the quality and diversity of their training datasets. This research seeks to explore the integration of generative models, such as LLMs and VLMs, with behaviour-based systems to enhance the robot's ability to respond dynamically to environmental stimuli and human interactions.
 
 \begin{figure}[h]
 \centering
@@ -13,13 +11,7 @@ Generally, robots can be operated by all these system types, but in current robo
 \label{fig::nv2_strucutre}
 \end{figure}
 
-Figure \ref{fig::nv2_strucutre} \textit{BT navigator Server} represents the Behaviour-based system, where the Waypoint follower provides waypoint following behaviour. In contrast, the \textit{Planner server} implements a Deliberative system, while the \textit{Controller server} functions as a Reactive system. Typically, the \textit{Planner server} and \textit{Controller server} are used together, forming a hybrid system that balances long-term planning with real-time responsiveness. This architecture can be directly applied to most navigational tasks focusing on static and dynamic environments without human presence. Due to the fixed rule-based nature of the systems, social awareness and the spontaneity of humans cannot be easily identified by the system.
-
-In contrast, Learning-based systems incorporate Machine learning (ML) or Deep learning (DL) techniques either partially or entirely to implement the system. The accuracy and versatility of these systems heavily depend on the quality and diversity of the dataset used for training, which in turn influences their adaptability to dynamic environments. One advantage is the opportunity to include human-robot interaction scenarios in the dataset, allowing the learning-based system to implement proper and dynamic reactions. One issue with this system is that its capabilities and responses entirely depend on the dataset.
-
-Due to the limitations in learning and non-learning-based systems, as well as the emergence of LLMS and VLMS, a new research sub-area has developed in recent years, focusing on combining a robot's control or planning system with either LLMs or VLMs to generate dynamic execution plans based on environmental stimuli. These new systems are generally based on behaviour-based systems, and LLM or VLM is used to either generate a \textit{behaviour tree} \cite{izzo_btgenbot_2024, cao_robot_nodate} or a \textit{Python snippet} \cite{Yuan_2024} containing an execution plan.
-
-This research aims to identify the limitations of generative behaviour-based systems in human-robot interaction and propose solutions to enhance their functionality. The goal is to achieve smoother and more dynamic behaviours in robotic systems. To summarise these requirements, the following research questions have been identified:
+The following research questions have been identified to address these challenges:
 
 \begin{enumerate}
     \item \textit{How can robots exhibit dynamic behaviour in socially aware contexts, and what are the core principles and system requirements necessary to enable effective adaptability?} 
