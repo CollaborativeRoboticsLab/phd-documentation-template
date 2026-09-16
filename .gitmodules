@@ -4,3 +4,6 @@
 [submodule "paper-experiments/icra-experience-2027"]
 	path = paper-experiments/icra-experience-2027
 	url = https://github.com/CollaborativeRoboticsLab/icra-experience-2027
+[submodule "paper-experiments/experience-2027"]
+	path = paper-experiments/experience-2027
+	url = https://github.com/CollaborativeRoboticsLab/experience-2027.git
