@@ -1,3 +1,6 @@
 [submodule "paper-experiments/gpsfsm-2026"]
 	path = paper-experiments/gpsfsm-2026
 	url = https://github.com/CollaborativeRoboticsLab/gpsfsm-2026
+[submodule "paper-experiments/experience-2027"]
+	path = paper-experiments/experience-2027
+	url = https://github.com/CollaborativeRoboticsLab/experience-2027.git
