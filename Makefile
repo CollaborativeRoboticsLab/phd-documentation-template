@@ -15,6 +15,7 @@ SHELL := /usr/bin/env bash
 #   make clean
 #   make feed-citations thesis
 #   make feed-citations paper experience-2027
+#   make anonymize-code paper-experiments/experience-2027/code
 
 # Positional arguments are read from MAKECMDGOALS so the command surface stays
 # close to a CLI, for example `make build-paper experience-2027`.
@@ -34,6 +35,8 @@ PAPER_OUTDIR := build/papers/$(PAPER)
 PAPER_BIB := $(PAPER_DIR)/references.bib
 PAPER_FLAGGED := $(PAPER_DIR)/unresolved_cite.txt
 
+ANON_TARGET := $(if $(filter anonymize-code,$(COMMAND)),$(ARG2),)
+
 FEED_SCOPE := $(if $(filter feed-citations,$(COMMAND)),$(ARG2),)
 FEED_PAPER := $(if $(filter feed-citations,$(COMMAND)),$(ARG3),)
 FEED_PAPER_DIR := papers/$(FEED_PAPER)
@@ -44,7 +47,7 @@ THESIS_DOC := $(THESIS_DIR)/main.tex
 THESIS_OUTDIR := build/thesis/latex
 THESIS_BIB := $(THESIS_DIR)/Bibliography.bib
 
-.PHONY: all build-paper build-thesis clean-paper dedupe-paper verify-paper unused-paper wordcount dedupe verify unused clean thesis-wordcount thesis-dedupe thesis-verify thesis-unused thesis-clean thesis-resolve-citations resolve-citations thesis-feed-citations feed-citations thesis-sync-citations sync-citations
+.PHONY: all build-paper build-thesis clean-paper dedupe-paper verify-paper unused-paper wordcount dedupe verify unused clean anonymize-code thesis-wordcount thesis-dedupe thesis-verify thesis-unused thesis-clean thesis-resolve-citations resolve-citations thesis-feed-citations feed-citations thesis-sync-citations sync-citations $(ARG2) $(ARG3)
 
 all: build-thesis
 
@@ -57,6 +60,11 @@ verify: thesis-verify
 unused: thesis-unused
 
 clean: thesis-clean
+
+anonymize-code:
+	@test -n "$(ANON_TARGET)" || { echo "usage: make anonymize-code <directory>"; exit 1; }
+	@test -d "$(ANON_TARGET)" || { echo "missing directory: $(ANON_TARGET)"; exit 1; }
+	@python3 scripts/anonymize_codebase.py "$(ANON_TARGET)"
 
 # Build one paper into its matching build/papers/<paper-dir> output directory.
 build-paper:
@@ -92,6 +100,9 @@ unused-paper:
 # Swallow the paper directory argument so `make build-paper experience-2027`
 # treats it as data for the target above instead of as an unknown goal.
 %:
+	@:
+
+$(ARG2) $(ARG3):
 	@:
 
 # Build the thesis from thesis/latex/main.tex into build/thesis/latex.
