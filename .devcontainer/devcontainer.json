@@ -41,5 +41,7 @@
         }
     },
     "postCreateCommand": "mkdir -p build",
-    "remoteUser": "vscode"
+    "remoteUser": "vscode",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    "workspaceFolder": "/workspace"
 }
