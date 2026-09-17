@@ -131,6 +131,12 @@ paper-experiments/
 ├── paper_2/
 └── paper_3/
 ```
+Use Git submodules to link the experimental repositories to their corresponding papers.
+
+```bash
+cd paper-experiments
+git submodule add https://github.com/CollaborativeRoboticsLab/Academic-project-page-template.git
+```
 
 ## Common make commands
 
@@ -144,27 +150,38 @@ make build-thesis
 
 # Count the words in the thesis
 make wordcount
+make thesis-wordcount
 
 # Remove duplicate entries in the bibliography
 make dedupe
+make thesis-dedupe
 
 # Check for consistency and correctness in the thesis files
 make verify
+make thesis-verify
 
 # Identify unused references in the bibliography
 make unused
+make thesis-unused
 
 # Remove auxiliary files generated during compilation
 make clean
+make thesis-clean
 
 # Resolve citation issues in the thesis
 make resolve-citations
+make thesis-resolve-citations
 
 # Update the bibliography with new citations
 make feed-citations thesis
+make thesis-feed-citations
 
 # Synchronize citations with the bibliography database
 make sync-citations
+make thesis-sync-citations
+
+# Anonymize a code directory before sharing or submission
+make anonymize-code paper-experiments/experience-2027/code
 ```
 
 ### Papers
@@ -177,6 +194,9 @@ make build-paper <paper-dir>
 
 # Compile a specific entry file within the paper directory
 make build-paper <paper-dir> <entry.tex>
+
+# Compile a specific entry file using the ENTRY override
+make build-paper <paper-dir> ENTRY=<entry.tex>
 
 # Remove auxiliary files generated during compilation for the paper
 make clean-paper <paper-dir>
@@ -200,6 +220,8 @@ Examples:
 make build-paper experience-2027
 make build-paper gpsfsm-2026 conference_101719.tex
 make verify-paper capabilities2-2025
+make thesis-verify
+make anonymize-code paper-experiments/experience-2027/code
 ```
 
 
